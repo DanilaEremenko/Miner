@@ -6,29 +6,30 @@ import java.util.Random;
 
 public class LevelsGenerator {
     private ArrayList<Cell> cells;
+
     private Pane root;
 
 
     public LevelsGenerator(int weight, int hight, int minesDigit) {
         cells = new ArrayList<>();
-        int condition;
-        int acctuallyMinesDigit = 0;
+        int[] numbersOfMines = new int[minesDigit];
+        int digit;
+        for (int i = 0; i < minesDigit; i++) {
+            digit = new Random().nextInt(weight * hight);
+            while (contains(digit, numbersOfMines))
+                digit = new Random().nextInt(weight * hight);
+
+            numbersOfMines[i] = digit;
+        }
 
         for (int i = 1; i <= weight; i++)
-            for (int j = 1; j <= hight; j++)
-                if (acctuallyMinesDigit < minesDigit) {
-                    condition = new Random().nextInt(2) + new Random().nextInt(2);
-                    if (condition == 2) {
-                        cells.add(new Cell(9, i, j));
-                    } else
-                        cells.add(new Cell(0, i, j));
-                    //               if (i == weight && j == hight){
-                    //                 i=1;
-                    //               j=1;
-                    //         }
+            for (int j = 1; j <= hight; j++) {
+                if (contains((i - 1) * 10 + (j - 1), numbersOfMines))
+                    cells.add(new Cell(9, j, i));
+                else
+                    cells.add(new Cell(0, j, i));
+            }
 
-                } else
-                    break;
 
         root = new Pane();
         for (Cell cell : cells) {
@@ -36,6 +37,15 @@ public class LevelsGenerator {
 
         }
 
+
+    }
+
+    private boolean contains(int dig, int[] mass) {
+        for (int i = 0; i < mass.length; i++)
+            if (dig == mass[i])
+                return true;
+
+        return false;
 
     }
 
