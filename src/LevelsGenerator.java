@@ -22,6 +22,7 @@ public class LevelsGenerator {
             numbersOfMines[i] = digit;
         }
 
+
         for (int i = 1; i <= weight; i++)
             for (int j = 1; j <= hight; j++) {
                 if (contains((i - 1) * 10 + (j - 1), numbersOfMines))
