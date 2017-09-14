@@ -7,19 +7,20 @@ import javafx.scene.shape.Rectangle;
 
 public class Cell extends Button {
     private int conditon;//9-бомба
-    private boolean flag = false;//true есть флаг, false нет флага
     private int x;
     private int y;
     private int numberInArray;
     Content myContent;
+    private boolean flag = false;//true есть флаг, false нет флага
 
 
-    public Cell(int conditon, int x, int y,int weidth) {
+    public Cell(int conditon, int x, int y, int weidth) {
         this.conditon = conditon;
         this.x = x;
         this.y = y;
-        numberInArray=weidth*(y-1)+x-1;
+        numberInArray = weidth * (y - 1) + x - 1;
 
+        setStyle(" -fx-base: #FAFAFA;");//
         setPrefSize(50, 50);
         setTranslateX(x * 50);
         setTranslateY(y * 50);
@@ -29,14 +30,15 @@ public class Cell extends Button {
             myContent = new Content(this, 0);
 
         setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.SPACE) {
-                        if (!flag)
+                    if (event.getCode() == KeyCode.SPACE)
+                        if (!flag) {
                             flag = true;
-                        else
+                            setStyle(" -fx-base: #CC3333");
+                        } else {
                             flag = false;
+                            setStyle(" -fx-base: #FAFAFA;");//
+                        }
 
-
-                    }
                     if (event.getCode() == KeyCode.ENTER)
                         check();
                 }
@@ -63,9 +65,6 @@ public class Cell extends Button {
         return y;
     }
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
 
     public Content getMyContent() {
         return myContent;
