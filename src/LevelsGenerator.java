@@ -1,22 +1,35 @@
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+
 
 import java.util.ArrayList;
 import java.util.Random;
 
 
 public class LevelsGenerator {
+
+    static int minesDigit;
     private ArrayList<Cell> cells;
-
-
-    private Pane root;
+    static private ArrayList<Cell> bombs;
+    static private Pane root;
+    static private Pane rootGameOver;
+    static private Pane rootWin;
+    static private Pane mainRoot;
+    private Scene scene;
     int weight;
     int hight;
 
 
     public LevelsGenerator(int weight, int hight, int minesDigit) {
         this.weight = weight;
+        this.minesDigit=minesDigit;
         this.hight = hight;
         cells = new ArrayList<>();
+        bombs = new ArrayList<>();
         int[] numbersOfMines = new int[minesDigit];//массив, который хранит номера мин
         int digit;//Промежуточная переменная для избежания повторения позиций мин
         for (int i = 0; i < minesDigit; i++) {
@@ -31,19 +44,29 @@ public class LevelsGenerator {
         for (int i = 1; i <= weight; i++)
             for (int j = 1; j <= hight; j++) {
                 if (contains(weight * (i - 1) + j, numbersOfMines)) {
-                    cells.add(new Cell(9, j, i, weight));
+                    bombs.add(new Cell(9, j, i, weight));
+                    cells.add(bombs.get(bombs.size()-1));
                 } else
                     cells.add(new Cell(0, j, i, weight));
             }
 
 
+        mainRoot = new Pane();
         root = new Pane();
+        rootGameOver = new Pane(new Label("GAME OVER"));
+        rootWin = new Pane(new Label("WIN"));
         for (Cell cell : cells) {
             if (cell.getConditon() != 9)
                 cell.getMyContent().setText("" + searchMine(cell, cells));
 
+
             root.getChildren().addAll(cell, cell.getMyContent());
         }
+
+        rootGameOver.setVisible(false);
+        rootWin.setVisible(false);
+        mainRoot.getChildren().addAll(root, rootGameOver, rootWin);
+        scene = new Scene(mainRoot, Game.getWidth(), Game.getHeight());
 
 
     }
@@ -90,7 +113,25 @@ public class LevelsGenerator {
         return digit;
     }
 
-    public Pane getRoot() {
-        return root;
+    static void gameOver() {
+        root.setVisible(false);
+        rootGameOver.setVisible(true);
+    }
+
+    static void gameWin() {
+        root.setVisible(false);
+        rootWin.setVisible(true);
+    }
+
+    public static ArrayList<Cell> getBombs() {
+        return bombs;
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    static public int getMinesDigit() {
+        return minesDigit;
     }
 }

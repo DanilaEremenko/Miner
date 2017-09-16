@@ -1,14 +1,15 @@
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
+
 
 
 public class Content extends Label {
 
 
     public Content(Cell cell, Color color) {
+      //  Image image=new Image("2017-09-09 13-27-46.jpg");
+      //  ImageView imageView=new ImageView(image);
+      //  setGraphic(imageView);
         common(cell);
     }
 

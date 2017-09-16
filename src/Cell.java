@@ -38,6 +38,7 @@ public class Cell extends Button {
                             flag = false;
                             setStyle(" -fx-base: #FAFAFA;");//
                         }
+                      checkFlag();
 
                     if (event.getCode() == KeyCode.ENTER)
                         check();
@@ -45,14 +46,21 @@ public class Cell extends Button {
         );
     }
 
-    public static void generateEmpty(int conditon, int x, int y) {
-
-
-    }
-
     public void check() {
         setVisible(false);
         myContent.setVisible(true);
+        if (conditon == 9)
+            LevelsGenerator.gameOver();
+
+    }
+
+    public void checkFlag() {
+        int c = 0;
+        for (Cell bomb : LevelsGenerator.getBombs())
+            if (bomb.flag)
+                c++;
+        if(c==LevelsGenerator.getMinesDigit())
+            LevelsGenerator.gameWin();
 
 
     }
