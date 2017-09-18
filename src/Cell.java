@@ -7,24 +7,30 @@ import javafx.scene.shape.Rectangle;
 
 public class Cell extends Button {
     private int conditon;//9-бомба
-    private Content myContent;
-    private static int size = 50;
+    private int x;
+    private int y;
+    private int numberInArray;
+    Content myContent;
     private boolean flag = false;//true есть флаг, false нет флага
 
 
     public Cell(int conditon, int x, int y, int weidth) {
         this.conditon = conditon;
+        this.x = x;
+        this.y = y;
+        numberInArray = weidth * (y - 1) + x - 1;
+
         setStyle(" -fx-base: #FAFAFA;");//
-        setPrefSize(size, size);
-        setTranslateX(x * size);
-        setTranslateY(y * size);
+        setPrefSize(50, 50);
+        setTranslateX(x * 50);
+        setTranslateY(y * 50);
         if (conditon == 9)
             myContent = new Content(this, Color.RED);
         else
             myContent = new Content(this, 0);
 
         setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.SPACE)
+                    if (event.getCode() == KeyCode.SPACE)
                         if (!flag) {
                             flag = true;
                             setStyle(" -fx-base: #CC3333");
@@ -32,7 +38,6 @@ public class Cell extends Button {
                             flag = false;
                             setStyle(" -fx-base: #FAFAFA;");//
                         }
-                    checkFlag();
 
                     if (event.getCode() == KeyCode.ENTER)
                         check();
@@ -40,38 +45,34 @@ public class Cell extends Button {
         );
     }
 
+    public static void generateEmpty(int conditon, int x, int y) {
+
+
+    }
 
     public void check() {
         setVisible(false);
         myContent.setVisible(true);
-        if (conditon == 9)
-            Level.gameOver();
-
-    }
-
-
-    public void checkFlag() {
-        int c = 0;
-        for (Cell bomb : Level.getBombs())
-            if (bomb.flag)
-                c++;
-        if (c == Level.getMinesDigit())
-            Level.gameWin();
 
 
     }
 
-
-    public void addCondition() {
-        if (conditon != 9)
-            conditon++;
-
+    public int getX() {
+        return x;
     }
+
+    public int getY() {
+        return y;
+    }
+
 
     public Content getMyContent() {
         return myContent;
     }
 
+    public int getNumberInArray() {
+        return numberInArray;
+    }
 
     public int getConditon() {
         return conditon;
