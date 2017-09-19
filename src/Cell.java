@@ -1,25 +1,16 @@
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+
 
 public class Cell extends Button {
     private int conditon;//9-бомба
-    private int x;
-    private int y;
-    private int numberInArray;
     Content myContent;
     private boolean flag = false;//true есть флаг, false нет флага
 
 
     public Cell(int conditon, int x, int y, int weidth) {
         this.conditon = conditon;
-        this.x = x;
-        this.y = y;
-        numberInArray = weidth * (y - 1) + x - 1;
-
         setStyle(" -fx-base: #FAFAFA;");//
         setPrefSize(50, 50);
         setTranslateX(x * 50);
@@ -38,19 +29,20 @@ public class Cell extends Button {
                             flag = false;
                             setStyle(" -fx-base: #FAFAFA;");//
                         }
-                      checkFlag();
+                    checkFlag();
 
                     if (event.getCode() == KeyCode.ENTER)
                         check();
                 }
         );
+
     }
 
     public void check() {
         setVisible(false);
         myContent.setVisible(true);
         if (conditon == 9)
-            LevelsGenerator.gameOver();
+           LevelsGenerator.gameOver();
 
     }
 
@@ -59,18 +51,15 @@ public class Cell extends Button {
         for (Cell bomb : LevelsGenerator.getBombs())
             if (bomb.flag)
                 c++;
-        if(c==LevelsGenerator.getMinesDigit())
+        if (c == LevelsGenerator.getMinesDigit())
             LevelsGenerator.gameWin();
 
 
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public void addCondition() {
+        if (conditon != 9)
+            conditon++;
     }
 
 
@@ -78,9 +67,6 @@ public class Cell extends Button {
         return myContent;
     }
 
-    public int getNumberInArray() {
-        return numberInArray;
-    }
 
     public int getConditon() {
         return conditon;
