@@ -3,12 +3,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
 
-
 import java.util.ArrayList;
 import java.util.Random;
 
 
-public class LevelsGenerator {
+public class Level {
 
     static int minesDigit;
     private ArrayList<Cell> cells;
@@ -22,12 +21,13 @@ public class LevelsGenerator {
     int hight;
 
 
-    public LevelsGenerator(int weight, int hight, int minesDigit) {
+    public Level(int weight, int hight, int minesDigit) {
         this.weight = weight;
         this.minesDigit = minesDigit;
         this.hight = hight;
         cells = new ArrayList<>();
         bombs = new ArrayList<>();
+        //
         int[] numbersOfMines = new int[minesDigit];//массив, который хранит номера мин
         int digit;//Промежуточная переменная для избежания повторения позиций мин
         for (int i = 0; i < minesDigit; i++) {
@@ -35,17 +35,17 @@ public class LevelsGenerator {
             while (contains(digit, numbersOfMines))//Цикл для избежания повторения позиций мин
                 digit = new Random().nextInt(weight * hight);
 
-            numbersOfMines[i] = digit;
+            numbersOfMines[i] = digit - 1;
         }
         //Все что выше для генерации номеров мин
 
-        for (int i = 0; i < weight; i++)
-            for (int j = 0; j < hight; j++) {
+        for (int i = 0; i < hight; i++)
+            for (int j = 0; j < weight; j++) {
                 if (contains(weight * i + j, numbersOfMines)) {
-                    bombs.add(new Cell(9, j + 1, i + 1, weight));
+                    bombs.add(new Cell(9, j + 1, i + 1, weight, hight, i * weight + j));
                     cells.add(bombs.get(bombs.size() - 1));
                 } else
-                    cells.add(new Cell(0, j + 1, i + 1, weight));
+                    cells.add(new Cell(0, j + 1, i + 1, weight, hight, i * weight + j));
             }
 
 
@@ -68,6 +68,7 @@ public class LevelsGenerator {
 
     }
 
+    //Метод для обеспечения отсутсвия повторов номеров мин
     private boolean contains(int dig, int[] mass) {
         for (int i = 0; i < mass.length; i++)
             if (dig == mass[i])
@@ -77,64 +78,50 @@ public class LevelsGenerator {
 
     }
 
+    //установка на клетки номеров, обозначающих колличество мин находящийся рядом
     private void searchMine(int[] numbersOfMines) {
 
+        int nearlyMines[];
         for (int i = 0; i < numbersOfMines.length; i++) {
+            nearlyMines = cells.get(numbersOfMines[i]).getNearlyCell();
 
-            if ((numbersOfMines[i]) % weight != weight - 1)
-                cells.get(numbersOfMines[i] + 1).addCondition();
+            for (int numberCell : nearlyMines)
+                if (numberCell > 0)
+                    cells.get(numberCell).addCondition();
 
-            if (numbersOfMines[i] % weight != 0)
-                cells.get(numbersOfMines[i] - 1).addCondition();
-
-            if (numbersOfMines[i] / weight != 0) {
-
-                cells.get(numbersOfMines[i] - weight).addCondition();
-
-                if (numbersOfMines[i] % weight != weight-1)
-                    cells.get(numbersOfMines[i] - weight + 1).addCondition();
-
-                if (numbersOfMines[i] % weight != 0)
-                    cells.get(numbersOfMines[i] - weight - 1).addCondition();
-
-            }
-            if (numbersOfMines[i] / weight != hight - 1) {
-
-                cells.get(numbersOfMines[i] + weight).addCondition();
-
-                if (numbersOfMines[i] % weight != weight-1)
-                    cells.get(numbersOfMines[i] + weight+1).addCondition();
-
-                if (numbersOfMines[i] % weight != 0)
-                    cells.get(numbersOfMines[i] + weight - 1).addCondition();
-            }
         }
-
         for (Cell cell : cells)
             cell.getMyContent().setText("" + cell.getConditon());
-
-
     }
 
+    //Установка панели проигрышка
     static void gameOver() {
         root.setVisible(false);
         rootGameOver.setVisible(true);
     }
 
+    //Установка панели победы
     static void gameWin() {
         root.setVisible(false);
         rootWin.setVisible(true);
     }
 
-    public static ArrayList<Cell> getBombs() {
+    public void check(int numberInArray) {
+        cells.get(numberInArray).check();
+
+    }
+
+
+    static ArrayList<Cell> getBombs() {
         return bombs;
     }
 
-    public Scene getScene() {
+    Scene getScene() {
         return scene;
     }
 
-    static public int getMinesDigit() {
+    static int getMinesDigit() {
         return minesDigit;
     }
 }
+

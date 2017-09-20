@@ -3,16 +3,17 @@ import javafx.stage.Stage;
 
 
 public class Game extends Application {
-    LevelsGenerator levelsGenerator;
+    Level level;
     private static double width = 600;
     private static double height = 600;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        levelsGenerator = new LevelsGenerator(9, 9, 10);
+        level = new Level(9, 9, 10);
+        Bot myManBot = new Bot(level);
 
 
-        primaryStage.setScene(levelsGenerator.getScene());
+        primaryStage.setScene(level.getScene());
         primaryStage.show();
 
     }
