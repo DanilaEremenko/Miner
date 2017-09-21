@@ -7,14 +7,16 @@ import java.util.ArrayList;
 
 public class Cell extends Button {
     private int conditon;//9-бомба
-    Content myContent;
-    private int[] nearlyCell;
+    private Content myContent;
+    private int numberInArray;
+    private ArrayList<Cell> nearlyCells;
     private int weidth;
     private int hight;
     private boolean flag = false;//true есть флаг, false нет флага
 
 
-    public Cell(int conditon, int x, int y, int weidth, int hight, int numberOfMine) {
+    public Cell(int conditon, int x, int y, int weidth, int hight, int numberInArray) {
+        this.numberInArray = numberInArray;
         this.conditon = conditon;
         this.weidth = weidth;
         this.hight = hight;
@@ -23,7 +25,6 @@ public class Cell extends Button {
         setTranslateX(x * 50);
         setTranslateY(y * 50);
 
-        findNearlyCells(numberOfMine);
 
         if (conditon == 9)
             myContent = new Content(this, Color.RED);
@@ -44,66 +45,52 @@ public class Cell extends Button {
                     if (event.getCode() == KeyCode.ENTER)
                         check();
 
-                    if(event.getCode()== KeyCode.C) {
-                       myContent.setVisible(true);
-                        setVisible(false);
-                    }
                 }
         );
 
     }
 
-    //Поиск клеток находящихся рядом
-    private void findNearlyCells(int numberOfMine) {
-
-        nearlyCell = new int[8];
-        for (int i : nearlyCell)
-            nearlyCell[i] = -10;
-
-
-        if (numberOfMine % weidth != 0)
-            nearlyCell[0] = numberOfMine - 1;
-
-        if (numberOfMine % weidth != weidth - 1)//Если не самая правая
-            nearlyCell[4] = numberOfMine + 1;
-
-
-        if (numberOfMine / weidth != 0) {
-
-            nearlyCell[2] = numberOfMine - weidth;
-
-            if (numberOfMine % weidth != weidth - 1)
-                nearlyCell[3] = numberOfMine - weidth + 1;
-
-            if (numberOfMine % weidth != 0)
-                nearlyCell[1] = numberOfMine - weidth - 1;
-
-        }
-        if (numberOfMine / weidth != hight - 1) {
-
-            nearlyCell[6] = numberOfMine + weidth;
-
-            if (numberOfMine % weidth != weidth - 1)
-                nearlyCell[5] = numberOfMine + weidth + 1;
-
-            if (numberOfMine % weidth != 0)
-                nearlyCell[7] = numberOfMine + weidth - 1;
-        }
-
-
-    }
-
 
     //Проверка мины
-    public void check() {
+    //Проверка мины
+    int check() {
         setVisible(false);
         myContent.setVisible(true);
         if (conditon == 9)
             Level.gameOver();
+        if (conditon == 0) {
+            if (numberInArray % weidth != 0)
+                Level.getCells().get(numberInArray - 1).check();//Если не самая левая
+
+            if (numberInArray % weidth != weidth - 1) //Если не самая правая
+                Level.cells.get(numberInArray + 1).check();
 
 
+            if (numberInArray / weidth != 0) {//Если не в верхней строчке
+
+                Level.getCells().get(numberInArray - weidth).check();
+
+                if (numberInArray % weidth != weidth - 1)
+                    Level.getCells().get(numberInArray - weidth + 1).check();
+
+                if (numberInArray % weidth != 0)
+                    Level.getCells().get(numberInArray - weidth - 1).check();
+
+            }
+            if (numberInArray / weidth != hight - 1) {//Если не в нижней
+                Level.getCells().get(numberInArray + weidth).check();
+
+                if (numberInArray % weidth != weidth - 1)
+                    Level.getCells().get(numberInArray + weidth + 1).check();
+
+                if (numberInArray % weidth != 0)
+                    Level.getCells().get(numberInArray + weidth - 1).check();
+
+            }
 
 
+        }
+        return conditon;
     }
 
 
@@ -120,22 +107,52 @@ public class Cell extends Button {
     }
 
     //Добавление к состоянию единицы
-    void addCondition() {
-        if (conditon != 9)
+    void addCondition(){
+        if(conditon!=9)
             conditon++;
     }
 
+    //Установка состояния на все мины
+    void setConditions() {
+        if (numberInArray % weidth != 0)
+            Level.getCells().get(numberInArray - 1).addCondition();//Если не самая левая
 
-    public int[] getNearlyCell() {
-        return nearlyCell;
+        if (numberInArray % weidth != weidth - 1) //Если не самая правая
+            Level.cells.get(numberInArray + 1).addCondition();
+
+
+        if (numberInArray / weidth != 0) {//Если не в верхней строчке
+
+            Level.getCells().get(numberInArray - weidth).addCondition();
+
+            if (numberInArray % weidth != weidth - 1)
+                Level.getCells().get(numberInArray - weidth + 1).addCondition();
+
+            if (numberInArray % weidth != 0)
+                Level.getCells().get(numberInArray - weidth - 1).addCondition();
+
+        }
+        if (numberInArray / weidth != hight - 1) {//Если не в нижней
+            Level.getCells().get(numberInArray + weidth).addCondition();
+
+            if (numberInArray % weidth != weidth - 1)
+                Level.getCells().get(numberInArray + weidth + 1).addCondition();
+
+            if (numberInArray % weidth != 0)
+                Level.getCells().get(numberInArray + weidth - 1).addCondition();
+
+
+        }
     }
 
-    public Content getMyContent() {
+    void setText() {
+        myContent.setText("" + conditon);
+    }
+
+
+    Content getMyContent() {
         return myContent;
     }
 
-    public int getConditon() {
-        return conditon;
-    }
 
 }

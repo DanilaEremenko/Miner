@@ -9,22 +9,22 @@ import java.util.Random;
 
 public class Level {
 
-    static int minesDigit;
-    private ArrayList<Cell> cells;
+    static public ArrayList<Cell> cells;
     static private ArrayList<Cell> bombs;
-    static private Pane root;
-    static private Pane rootGameOver;
-    static private Pane rootWin;
-    static private Pane mainRoot;
+    static private Pane root;//Игровая панель
+    static private Pane rootGameOver;//Панель выигрыша
+    static private Pane rootWin;//Панель проигрыша
+    static private Pane mainRoot;//Панель на которой хранятся все остальные панели
     private Scene scene;
-    int weight;
-    int hight;
+    private static int minesDigit;//Колличество мин
+    private static int levelWeight;//Число мин в ширину
+    private static int levelHight;//Число мин в высоту
 
 
     public Level(int weight, int hight, int minesDigit) {
-        this.weight = weight;
+        levelWeight = weight;
         this.minesDigit = minesDigit;
-        this.hight = hight;
+        levelHight = hight;
         cells = new ArrayList<>();
         bombs = new ArrayList<>();
         //
@@ -54,7 +54,12 @@ public class Level {
         rootGameOver = new Pane(new Label("GAME OVER"));
         rootWin = new Pane(new Label("WIN"));
 
-        searchMine(numbersOfMines);
+        for (Cell bomb : bombs)
+            bomb.setConditions();
+
+
+        for (Cell cell : cells)
+            cell.setText();
 
         for (Cell cell : cells)
             root.getChildren().addAll(cell, cell.getMyContent());
@@ -64,37 +69,41 @@ public class Level {
         rootWin.setVisible(false);
         mainRoot.getChildren().addAll(root, rootGameOver, rootWin);
         scene = new Scene(mainRoot, Game.getWidth(), Game.getHeight());
+        Bot myManBot = new Bot(this);
 
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+
+                case C:
+                    myManBot.helpMeBot();
+                    break;
+
+            }
+        });
 
     }
 
     //Метод для обеспечения отсутсвия повторов номеров мин
-    private boolean contains(int dig, int[] mass) {
-        for (int i = 0; i < mass.length; i++)
-            if (dig == mass[i])
+    private static boolean contains(int dig, int[] mass) {
+        for (int number : mass)
+            if (dig == number)
                 return true;
 
         return false;
 
     }
 
-    //установка на клетки номеров, обозначающих колличество мин находящийся рядом
-    private void searchMine(int[] numbersOfMines) {
 
-        int nearlyMines[];
-        for (int i = 0; i < numbersOfMines.length; i++) {
-            nearlyMines = cells.get(numbersOfMines[i]).getNearlyCell();
+    /*Все что выше для конструктора
+    *
+    *
+    *
+    *
+    *
+    * Все что выше для конструктора*/
 
-            for (int numberCell : nearlyMines)
-                if (numberCell > 0)
-                    cells.get(numberCell).addCondition();
 
-        }
-        for (Cell cell : cells)
-            cell.getMyContent().setText("" + cell.getConditon());
-    }
-
-    //Установка панели проигрышка
+    // Установка панели проигрышка
     static void gameOver() {
         root.setVisible(false);
         rootGameOver.setVisible(true);
@@ -106,8 +115,8 @@ public class Level {
         rootWin.setVisible(true);
     }
 
-    public void check(int numberInArray) {
-        cells.get(numberInArray).check();
+    int check(int numberInArray) {
+        return cells.get(numberInArray).check();
 
     }
 
@@ -122,6 +131,18 @@ public class Level {
 
     static int getMinesDigit() {
         return minesDigit;
+    }
+
+    static int getLevelWeight() {
+        return levelWeight;
+    }
+
+    static int getLevelHight() {
+        return levelHight;
+    }
+
+    static ArrayList<Cell> getCells() {
+        return cells;
     }
 }
 
