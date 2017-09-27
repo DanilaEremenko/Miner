@@ -5,11 +5,12 @@ import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.Random;
+//Периодически выставляется меньше мин чем надо
 
 
 public class Level {
 
-    static public ArrayList<Cell> cells;
+    static private ArrayList<Cell> cells;
     static private ArrayList<Cell> bombs;
     static private Pane root;//Игровая панель
     static private Pane rootGameOver;//Панель выигрыша
@@ -27,7 +28,7 @@ public class Level {
         levelHight = hight;
         cells = new ArrayList<>();
         bombs = new ArrayList<>();
-        //
+
         int[] numbersOfMines = new int[minesDigit];//массив, который хранит номера мин
         int digit;//Промежуточная переменная для избежания повторения позиций мин
         for (int i = 0; i < minesDigit; i++) {
@@ -78,6 +79,10 @@ public class Level {
                     myManBot.helpMeBot();
                     break;
 
+                case ESCAPE:
+                    checkAll();
+                    break;
+
             }
         });
 
@@ -120,6 +125,14 @@ public class Level {
 
     }
 
+    void checkAll() {
+        for (Cell cell : cells) {
+            cell.setVisible(false);
+            cell.getMyContent().setVisible(true);
+
+        }
+    }
+
 
     static ArrayList<Cell> getBombs() {
         return bombs;
@@ -140,6 +153,7 @@ public class Level {
     static int getLevelHight() {
         return levelHight;
     }
+
 
     static ArrayList<Cell> getCells() {
         return cells;
