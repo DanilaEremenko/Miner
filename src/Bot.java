@@ -3,10 +3,11 @@ import java.util.Random;
 
 public class Bot {
 
+    private boolean doAnyThing = false;
     private Level level;
     private int numberStep = 0;
     int[] cells;//Номер в массива-номер клетки на поле
-                     //Значение-состояние клетки
+    //Значение-состояние клетки
 
 
     public Bot(Level level) {
@@ -19,30 +20,37 @@ public class Bot {
     }
 
     public void helpMeBot() {
-
         int numberCheckCell;
         if (numberStep == 0) {
             numberCheckCell = new Random().nextInt(Level.getLevelWeight() * Level.getLevelHight());
-            cells[numberCheckCell] = level.check(numberCheckCell);
-
-
-        } else {
-            checkZero();
-
+            cells[numberCheckCell] = Level.getCells().get(numberCheckCell).checkBot();
+            doAnyThing = true;
         }
-        numberStep++;
+
+
+
+        if (!doAnyThing) {
+            numberCheckCell = new Random().nextInt(Level.getLevelWeight() * Level.getLevelHight());
+            cells[numberCheckCell] = Level.getCells().get(numberCheckCell).checkBot();
+            doAnyThing = true;
+        }
+        checkZero();
+        doAnyThing = false;
+
+
     }
+
 
     private void checkZero() {
-        for (int i:cells) {
-            if(cells[i]==0)
-                level.getCells().get(i).check();
+        for (int i : cells) {
+            if (i == 0)
+                level.getCells().get(i).checkBot();
 
         }
-
-        }
-
 
     }
+
+
+}
 
 
