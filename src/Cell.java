@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class Cell extends Button {
     private int conditon;//9-бомба
     private Content myContent;
+    private boolean isFirstCheck = true;//Для первого хода
+    private boolean isChecked = false;
     private int numberInArray;
     private ArrayList<Cell> nearlyCells;
     private int weidth;
@@ -54,36 +56,39 @@ public class Cell extends Button {
     //Проверка мины
     //Проверка мины
     int check() {
+        isChecked = true;
         setVisible(false);
         myContent.setVisible(true);
         if (conditon == 9)
             Level.gameOver();
         if (conditon == 0) {
-            if (numberInArray % weidth != 0)
+            if (numberInArray % weidth != 0 && !Level.getCells().get(numberInArray - 1).isChecked)
                 Level.getCells().get(numberInArray - 1).check();//Если не самая левая
 
-            if (numberInArray % weidth != weidth - 1) //Если не самая правая
+            if (numberInArray % weidth != weidth - 1 && !Level.getCells().get(numberInArray + 1).isChecked) //Если не самая правая
                 Level.cells.get(numberInArray + 1).check();
 
 
             if (numberInArray / weidth != 0) {//Если не в верхней строчке
 
-                Level.getCells().get(numberInArray - weidth).check();
+                if (!Level.getCells().get(numberInArray - weidth).isChecked)
+                    Level.getCells().get(numberInArray - weidth).check();
 
-                if (numberInArray % weidth != weidth - 1)
+                if (numberInArray % weidth != weidth - 1 && !Level.getCells().get(numberInArray - weidth + 1).isChecked)
                     Level.getCells().get(numberInArray - weidth + 1).check();
 
-                if (numberInArray % weidth != 0)
+                if (numberInArray % weidth != 0 && !Level.getCells().get(numberInArray - weidth - 1).isChecked)
                     Level.getCells().get(numberInArray - weidth - 1).check();
 
             }
             if (numberInArray / weidth != hight - 1) {//Если не в нижней
-                Level.getCells().get(numberInArray + weidth).check();
+                if (!Level.getCells().get(numberInArray + weidth).isChecked)
+                    Level.getCells().get(numberInArray + weidth).check();
 
-                if (numberInArray % weidth != weidth - 1)
+                if (numberInArray % weidth != weidth - 1 && !Level.getCells().get(numberInArray + weidth + 1).isChecked)
                     Level.getCells().get(numberInArray + weidth + 1).check();
 
-                if (numberInArray % weidth != 0)
+                if (numberInArray % weidth != 0&&!Level.getCells().get(numberInArray +weidth- 1).isChecked)
                     Level.getCells().get(numberInArray + weidth - 1).check();
 
             }
@@ -91,6 +96,7 @@ public class Cell extends Button {
 
         }
         return conditon;
+
     }
 
 
@@ -107,8 +113,8 @@ public class Cell extends Button {
     }
 
     //Добавление к состоянию единицы
-    void addCondition(){
-        if(conditon!=9)
+    void addCondition() {
+        if (conditon != 9)
             conditon++;
     }
 
@@ -143,6 +149,14 @@ public class Cell extends Button {
 
 
         }
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    private void setChecked(boolean checked) {
+        isChecked = checked;
     }
 
     void setText() {
