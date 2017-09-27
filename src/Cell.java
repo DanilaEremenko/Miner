@@ -10,10 +10,10 @@ public class Cell extends Button {
     private Content myContent;
     private boolean isFirstCheck = true;//Для первого хода
     private boolean isChecked = false;
-    private int numberInArray;
+    final private int numberInArray;
     private ArrayList<Cell> nearlyCells;
-    private int weidth;
-    private int hight;
+    final private int weidth;
+    final private int hight;
     private boolean flag = false;//true есть флаг, false нет флага
 
 
@@ -52,9 +52,7 @@ public class Cell extends Button {
 
     }
 
-
-    //Проверка мины
-    //Проверка мины
+    //Проверка клетки
     int check() {
         isChecked = true;
         setVisible(false);
@@ -66,7 +64,7 @@ public class Cell extends Button {
                 Level.getCells().get(numberInArray - 1).check();//Если не самая левая
 
             if (numberInArray % weidth != weidth - 1 && !Level.getCells().get(numberInArray + 1).isChecked) //Если не самая правая
-                Level.cells.get(numberInArray + 1).check();
+                Level.getCells().get(numberInArray + 1).check();
 
 
             if (numberInArray / weidth != 0) {//Если не в верхней строчке
@@ -88,7 +86,7 @@ public class Cell extends Button {
                 if (numberInArray % weidth != weidth - 1 && !Level.getCells().get(numberInArray + weidth + 1).isChecked)
                     Level.getCells().get(numberInArray + weidth + 1).check();
 
-                if (numberInArray % weidth != 0&&!Level.getCells().get(numberInArray +weidth- 1).isChecked)
+                if (numberInArray % weidth != 0 && !Level.getCells().get(numberInArray + weidth - 1).isChecked)
                     Level.getCells().get(numberInArray + weidth - 1).check();
 
             }
@@ -99,6 +97,14 @@ public class Cell extends Button {
 
     }
 
+    int checkBot() {
+
+        setVisible(false);
+        myContent.setVisible(true);
+        if (conditon == 9)
+            Level.gameOver();
+        return conditon;
+    }
 
     //Проверка флагов
     private void checkFlag() {
@@ -107,13 +113,14 @@ public class Cell extends Button {
             if (bomb.flag)
                 c++;
         if (c == Level.getMinesDigit())
+
             Level.gameWin();
 
 
     }
 
     //Добавление к состоянию единицы
-    void addCondition() {
+    private void addCondition() {
         if (conditon != 9)
             conditon++;
     }
@@ -124,7 +131,7 @@ public class Cell extends Button {
             Level.getCells().get(numberInArray - 1).addCondition();//Если не самая левая
 
         if (numberInArray % weidth != weidth - 1) //Если не самая правая
-            Level.cells.get(numberInArray + 1).addCondition();
+            Level.getCells().get(numberInArray + 1).addCondition();
 
 
         if (numberInArray / weidth != 0) {//Если не в верхней строчке
