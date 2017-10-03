@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 
-public class Cell extends Button {
+class Cell extends Button {
     private int conditon;//9-бомба
     private Content myContent;
     private boolean isFirstCheck = true;//Для первого хода
@@ -15,7 +15,7 @@ public class Cell extends Button {
     private boolean flag = false;//true есть флаг, false нет флага
 
 
-    public Cell(int conditon, int x, int y, int numberInArray) {
+    Cell(int conditon, int x, int y, int numberInArray) {
         this.numberInArray = numberInArray;
         this.conditon = conditon;
         setStyle(" -fx-base: #FAFAFA;");//
@@ -56,34 +56,34 @@ public class Cell extends Button {
         if (conditon == 9)
             Level.gameOver();
         if (conditon == 0) {
-            if (numberInArray % Level.getLevelWeight() != 0 && !Game.getLevel().getCells().get(numberInArray - 1).isChecked)
-                Game.getLevel().getCells().get(numberInArray - 1).check();//Если не самая левая
+            if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray - 1).isChecked)
+                Level.getCells().get(numberInArray - 1).check();//Если не самая левая
 
-            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Game.getLevel().getCells().get(numberInArray + 1).isChecked) //Если не самая правая
-                Game.getLevel().getCells().get(numberInArray + 1).check();
+            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray + 1).isChecked) //Если не самая правая
+                Level.getCells().get(numberInArray + 1).check();
 
 
             if (numberInArray / Level.getLevelWeight() != 0) {//Если не в верхней строчке
 
-                if (!Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight()).isChecked)
-                    Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight()).check();
+                if (!Level.getCells().get(numberInArray - Level.getLevelWeight()).isChecked)
+                    Level.getCells().get(numberInArray - Level.getLevelWeight()).check();
 
-                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() + 1).isChecked)
-                    Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() + 1).check();
+                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).isChecked)
+                    Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).check();
 
-                if (numberInArray % Level.getLevelWeight() != 0 && !Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() - 1).isChecked)
-                    Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() - 1).check();
+                if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).isChecked)
+                    Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).check();
 
             }
             if (numberInArray / Level.getLevelWeight() != Level.getLevelHight() - 1) {//Если не в нижней
-                if (!Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()).isChecked)
-                    Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()).check();
+                if (!Level.getCells().get(numberInArray + Level.getLevelWeight()).isChecked)
+                    Level.getCells().get(numberInArray + Level.getLevelWeight()).check();
 
-                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight() + 1).isChecked)
-                    Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight() + 1).check();
+                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).isChecked)
+                    Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).check();
 
-                if (numberInArray % Level.getLevelWeight()!= 0 && !Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()- 1).isChecked)
-                    Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight() - 1).check();
+                if (numberInArray % Level.getLevelWeight()!= 0 && !Level.getCells().get(numberInArray + Level.getLevelWeight()- 1).isChecked)
+                    Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).check();
 
             }
 
@@ -105,7 +105,7 @@ public class Cell extends Button {
     //Проверка флагов
     private void checkFlag() {
         int c = 0;
-        for (Cell bomb : Game.getLevel().getBombs())
+        for (Cell bomb : Level.getBombs())
             if (bomb.flag)
                 c++;
         if (c == Level.getMinesDigit())
@@ -127,28 +127,28 @@ public class Cell extends Button {
             Level.getCells().get(numberInArray - 1).addCondition();//Если не самая левая
 
         if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1) //Если не самая правая
-            Game.getLevel().getCells().get(numberInArray + 1).addCondition();
+            Level.getCells().get(numberInArray + 1).addCondition();
 
 
         if (numberInArray / Level.getLevelWeight() != 0) {//Если не в верхней строчке
 
-            Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight()).addCondition();
+            Level.getCells().get(numberInArray - Level.getLevelWeight()).addCondition();
 
             if (numberInArray % Level.getLevelWeight()!= Level.getLevelWeight() - 1)
-                Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight()+ 1).addCondition();
+                Level.getCells().get(numberInArray - Level.getLevelWeight()+ 1).addCondition();
 
             if (numberInArray % Level.getLevelWeight() != 0)
-                Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() - 1).addCondition();
+                Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).addCondition();
 
         }
         if (numberInArray / Level.getLevelWeight() != Level.getLevelHight()- 1) {//Если не в нижней
-            Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()).addCondition();
+            Level.getCells().get(numberInArray + Level.getLevelWeight()).addCondition();
 
             if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
-                Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()+ 1).addCondition();
+                Level.getCells().get(numberInArray + Level.getLevelWeight()+ 1).addCondition();
 
             if (numberInArray % Level.getLevelWeight()!= 0)
-                Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()- 1).addCondition();
+                Level.getCells().get(numberInArray + Level.getLevelWeight()- 1).addCondition();
 
 
         }

@@ -8,7 +8,7 @@ import java.util.Random;
 //Периодически выставляется меньше мин чем надо
 
 
-public class Level {
+class Level {
 
     static private ArrayList<Cell> cells;
     static private ArrayList<Cell> bombs;
@@ -22,7 +22,7 @@ public class Level {
     static private int levelHight;//Число мин в высоту
 
 
-    public Level(int weight, int hight, int minesDigit) {
+    Level(int weight, int hight, int minesDigit) {
         levelWeight = weight;
         this.minesDigit = minesDigit;
         levelHight = hight;
@@ -38,9 +38,9 @@ public class Level {
 
             numbersOfMines[i] = digit;
         }
-        for (int i : numbersOfMines)//для тестирования
-            System.out.println(i);
-
+//        for (int i : numbersOfMines)//для тестирования
+//            System.out.println(i);
+//
         //Все что выше для генерации номеров мин
 
         for (int i = 0; i < hight; i++)
@@ -124,10 +124,10 @@ public class Level {
     }
 
 
-    public void reload() {
+    void reload() {
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
-
+        root.setVisible(true);
         for (Cell cell : cells) {
             cell.setConditon(0);
             cell.getMyContent().setVisible(false);
@@ -182,6 +182,8 @@ public class Level {
             cell.getMyContent().setVisible(true);
 
         }
+        System.out.println("Колличество бомб " + bombs.size());
+
     }
 
 

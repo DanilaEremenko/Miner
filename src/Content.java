@@ -2,14 +2,14 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 
 
-public class Content extends Label {
+class Content extends Label {
 
 
-    public Content(Cell cell, Color color) {
+    Content(Cell cell, Color color) {
         common(cell);
     }
 
-    public Content(Cell cell, int nearlyMine) {
+    Content(Cell cell, int nearlyMine) {
         setText("" + nearlyMine);
         common(cell);
     }

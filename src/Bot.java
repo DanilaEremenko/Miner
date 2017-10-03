@@ -23,14 +23,14 @@ public class Bot {
         int numberCheckCell;
         if (numberStep == 0) {
             numberCheckCell = new Random().nextInt(Level.getLevelWeight() * Level.getLevelHight());
-            cells[numberCheckCell] = Game.getLevel().getCells().get(numberCheckCell).checkBot();
+            cells[numberCheckCell] = Level.getCells().get(numberCheckCell).checkBot();
             doAnyThing = true;
         }
 
 
         if (!doAnyThing) {
             numberCheckCell = new Random().nextInt(Level.getLevelWeight() * Level.getLevelHight());
-            cells[numberCheckCell] = Game.getLevel().getCells().get(numberCheckCell).checkBot();
+            cells[numberCheckCell] = Level.getCells().get(numberCheckCell).checkBot();
             doAnyThing = true;
         }
 
@@ -44,34 +44,34 @@ public class Bot {
     private void checkZero() {
         for (int numberInArray = 0; numberInArray < cells.length; numberInArray++) {
             if (cells[numberInArray] == 0){
-                if (numberInArray % Level.getLevelWeight() != 0 && !Game.getLevel().getCells().get(numberInArray - 1).isChecked())
-                    Game.getLevel().getCells().get(numberInArray - 1).checkBot();//Если не самая левая
+                if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray - 1).isChecked())
+                    Level.getCells().get(numberInArray - 1).checkBot();//Если не самая левая
 
-                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Game.getLevel().getCells().get(numberInArray + 1).isChecked()) //Если не самая правая
-                    Game.getLevel().getCells().get(numberInArray + 1).checkBot();
+                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray + 1).isChecked()) //Если не самая правая
+                    Level.getCells().get(numberInArray + 1).checkBot();
 
 
                 if (numberInArray / Level.getLevelWeight() != 0) {//Если не в верхней строчке
 
-                    if (!Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight()).isChecked())
-                        Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight()).checkBot();
+                    if (!Level.getCells().get(numberInArray - Level.getLevelWeight()).isChecked())
+                        Level.getCells().get(numberInArray - Level.getLevelWeight()).checkBot();
 
-                    if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() + 1).isChecked())
-                        Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() + 1).checkBot();
+                    if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).isChecked())
+                        Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).checkBot();
 
-                    if (numberInArray % Level.getLevelWeight() != 0 && !Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() - 1).isChecked())
-                        Game.getLevel().getCells().get(numberInArray - Level.getLevelWeight() - 1).checkBot();
+                    if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).isChecked())
+                        Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).checkBot();
 
                 }
                 if (numberInArray / Level.getLevelWeight() != Level.getLevelHight() - 1) {//Если не в нижней
-                    if (!Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()).isChecked())
-                        Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()).checkBot();
+                    if (!Level.getCells().get(numberInArray + Level.getLevelWeight()).isChecked())
+                        Level.getCells().get(numberInArray + Level.getLevelWeight()).checkBot();
 
-                    if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight() + 1).isChecked())
-                        Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight() + 1).checkBot();
+                    if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).isChecked())
+                        Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).checkBot();
 
-                    if (numberInArray % Level.getLevelWeight()!= 0 && !Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight()- 1).isChecked())
-                        Game.getLevel().getCells().get(numberInArray + Level.getLevelWeight() - 1).checkBot();
+                    if (numberInArray % Level.getLevelWeight()!= 0 && !Level.getCells().get(numberInArray + Level.getLevelWeight()- 1).isChecked())
+                        Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).checkBot();
 
                 }
 

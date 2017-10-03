@@ -3,14 +3,13 @@ import javafx.stage.Stage;
 
 
 public class Game extends Application {
-    static Level level;
     final private static int width = 600;
     final private static int height = 600;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        level = new Level(9, 9, 10);
+        Level level = new Level(9, 9, 10);
         //level.reload();
 
 
@@ -32,7 +31,4 @@ public class Game extends Application {
         launch(args);
     }
 
-    static public Level getLevel() {
-        return level;
-    }
 }
