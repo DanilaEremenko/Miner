@@ -4,6 +4,7 @@ import javafx.scene.layout.Pane;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 //Периодически выставляется меньше мин чем надо
 
@@ -28,30 +29,17 @@ class Level {
         levelHight = hight;
         cells = new ArrayList<>();
         bombs = new ArrayList<>();
-
-        int[] numbersOfMines = new int[minesDigit];//массив, который хранит номера мин
-        int digit;//Промежуточная переменная для избежания повторения позиций мин
-        for (int i = 0; i < minesDigit; i++) {
-            digit = new Random().nextInt(weight * hight - 1);
-            while (contains(digit, numbersOfMines))//Цикл для избежания повторения позиций мин
-                digit = new Random().nextInt(weight * hight);
-
-            numbersOfMines[i] = digit;
-        }
-//        for (int i : numbersOfMines)//для тестирования
-//            System.out.println(i);
-//
-        //Все что выше для генерации номеров мин
+////здесь методд
+        int[] numbersOfMines =generateNumbersOfMines();//массив, который хранит номера мин
 
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++) {
                 if (contains(weight * i + j, numbersOfMines)) {
-                    bombs.add(new Cell(9, j + 1, i + 1, i * weight + j));
-                    cells.add(bombs.get(bombs.size() - 1));
+                    cells.add(new Cell(9, j + 1, i + 1, i * weight + j));
+                    bombs.add(cells.get(cells.size() - 1));//тут лучше бы переворачивать
                 } else
                     cells.add(new Cell(0, j + 1, i + 1, i * weight + j));
             }
-
 
         mainRoot = new Pane();
         root = new Pane();
@@ -75,6 +63,7 @@ class Level {
         scene = new Scene(mainRoot, Game.getWidth(), Game.getHeight());
         Bot myManBot = new Bot(this);
 
+        //Ниже значение кнопок
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
 
@@ -96,8 +85,9 @@ class Level {
     }
 
 
+
     //Метод для обеспечения отсутсвия повторов номеров мин
-    //Необходимо избавиться
+    //Необходимо избавиться/переделать
     private static boolean contains(int dig, int[] mass) {
         for (int number : mass)
             if (dig == number)
@@ -105,7 +95,21 @@ class Level {
 
         return false;
 
-    }
+    }//Проверка наличия числа в массиве
+
+    //общий метод вынесенный из reload и конструктора
+    private int[] generateNumbersOfMines () {
+        int[] numbersOfMines = new int[minesDigit];
+        int digit;//Промежуточная переменная для избежания повторения позиций мин
+        for (int i = 0; i < minesDigit; i++) {
+            digit = new Random().nextInt(levelWeight * levelHight - 1);
+            while (contains(digit, numbersOfMines))//Цикл для избежания повторения позиций мин
+                digit = new Random().nextInt(levelWeight * levelHight);
+
+            numbersOfMines[i] = digit;
+        }
+        return numbersOfMines;
+    }//Генерирование индексов мин без повторов
 
 
     /*Все что выше для конструктора
@@ -117,45 +121,31 @@ class Level {
     * Все что выше для конструктора*/
 
 
-    // Установка панели проигрышка
-    static void gameOver() {
-        root.setVisible(false);
-        rootGameOver.setVisible(true);
-    }
-
-
+    //Перезагрузка уровня
     void reload() {
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
         root.setVisible(true);
+        bombs.clear();
         for (Cell cell : cells) {
             cell.setConditon(0);
             cell.getMyContent().setVisible(false);
             cell.setVisible(true);
+            cell.setChecked(false);
         }
 
-        int[] numbersOfMines = new int[minesDigit];//массив, который хранит номера мин
-        int digit;//Промежуточная переменная для избежания повторения позиций мин
-        for (int i = 0; i < minesDigit; i++) {
-            digit = new Random().nextInt(levelWeight * levelHight - 1);
-            while (contains(digit, numbersOfMines))//Цикл для избежания повторения позиций мин
-                digit = new Random().nextInt(levelWeight * levelHight);
+            int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
 
-            numbersOfMines[i] = digit;
-        }
+            for (int i = 0; i < levelHight; i++)
+                for (int j = 0; j < levelWeight; j++) {
+                    if (contains(levelWeight * i + j, numbersOfMines)) {
 
+                        cells.get(i * levelWeight + j).setConditon(9);
+                        bombs.add(cells.get(i * levelWeight + j));
+                    }
 
-        int bombIndex = 0;
-        for (int i = 0; i < levelHight; i++)
-            for (int j = 0; j < levelWeight; j++) {
-                if (contains(levelWeight * i + j, numbersOfMines)) {
-                    bombs.get(bombIndex).setConditon(9);
-                    bombIndex++;
-                    cells.get(i * levelWeight + j).setConditon(9);
                 }
 
-
-            }
 
         for (Cell bomb : bombs)
             bomb.setConditions();
@@ -165,28 +155,39 @@ class Level {
             cell.setText();
     }
 
-    //Установка панели победы
+    //Установка панели победы(при успешном прохождении игры)
     static void gameWin() {
         root.setVisible(false);
         rootWin.setVisible(true);
     }
 
-    int check(int numberInArray) {
-        return cells.get(numberInArray).check();
-
+    // Установка панели проигрыша(при вскрытии бомбы)
+    static void gameOver() {
+        root.setVisible(false);
+        rootGameOver.setVisible(true);
     }
 
-    void checkAll() {
+    //Показывает изначальные условия(для кнопки ESC)
+    private void checkAll() {
         for (Cell cell : cells) {
             cell.setVisible(false);
             cell.getMyContent().setVisible(true);
 
         }
+        for (Cell bomb : bombs)
+            System.out.print("" + bomb.getNumberInArray() + ",");
+        rootGameOver.setVisible(false);
+        rootWin.setVisible(false);
+        root.setVisible(true);
+
+
         System.out.println("Колличество бомб " + bombs.size());
 
     }
 
 
+
+    //Геттеры
     Scene getScene() {
         return scene;
     }

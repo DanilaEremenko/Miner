@@ -1,6 +1,6 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
-
+//Кусок с кучей if давно пора закинуть в общий метод(используется в Bot и Cell для получения индексов соседних клеток
 
 public class Game extends Application {
     final private static int width = 600;

@@ -8,10 +8,8 @@ import java.util.ArrayList;
 class Cell extends Button {
     private int conditon;//9-бомба
     private Content myContent;
-    private boolean isFirstCheck = true;//Для первого хода
     private boolean isChecked = false;
     final private int numberInArray;
-    private ArrayList<Cell> nearlyCells;
     private boolean flag = false;//true есть флаг, false нет флага
 
 
@@ -48,8 +46,8 @@ class Cell extends Button {
 
     }
 
-    //Проверка клетки
-    int check() {
+    //Проверка клетки, чисто графический метод,не подойдет для бота
+    private void check() {
         isChecked = true;
         setVisible(false);
         myContent.setVisible(true);
@@ -82,17 +80,18 @@ class Cell extends Button {
                 if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).isChecked)
                     Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).check();
 
-                if (numberInArray % Level.getLevelWeight()!= 0 && !Level.getCells().get(numberInArray + Level.getLevelWeight()- 1).isChecked)
+                if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).isChecked)
                     Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).check();
 
             }
 
 
         }
-        return conditon;
+
 
     }
 
+    //Проверка клетки для бота
     int checkBot() {
 
         setVisible(false);
@@ -100,6 +99,7 @@ class Cell extends Button {
         if (conditon == 9)
             Level.gameOver();
         return conditon;
+
     }
 
     //Проверка флагов
@@ -121,7 +121,7 @@ class Cell extends Button {
             conditon++;
     }
 
-    //Установка состояния на все мины
+    //Установка состояния на все мины,вызывайтся на минах
     void setConditions() {
         if (numberInArray % Level.getLevelWeight() != 0)
             Level.getCells().get(numberInArray - 1).addCondition();//Если не самая левая
@@ -134,21 +134,21 @@ class Cell extends Button {
 
             Level.getCells().get(numberInArray - Level.getLevelWeight()).addCondition();
 
-            if (numberInArray % Level.getLevelWeight()!= Level.getLevelWeight() - 1)
-                Level.getCells().get(numberInArray - Level.getLevelWeight()+ 1).addCondition();
+            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
+                Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).addCondition();
 
             if (numberInArray % Level.getLevelWeight() != 0)
                 Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).addCondition();
 
         }
-        if (numberInArray / Level.getLevelWeight() != Level.getLevelHight()- 1) {//Если не в нижней
+        if (numberInArray / Level.getLevelWeight() != Level.getLevelHight() - 1) {//Если не в нижней
             Level.getCells().get(numberInArray + Level.getLevelWeight()).addCondition();
 
             if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
-                Level.getCells().get(numberInArray + Level.getLevelWeight()+ 1).addCondition();
+                Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).addCondition();
 
-            if (numberInArray % Level.getLevelWeight()!= 0)
-                Level.getCells().get(numberInArray + Level.getLevelWeight()- 1).addCondition();
+            if (numberInArray % Level.getLevelWeight() != 0)
+                Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).addCondition();
 
 
         }
@@ -159,12 +159,13 @@ class Cell extends Button {
         this.conditon = conditon;
     }
 
-    //Открыли ли клетку
+    //Открыли ли клетку(для автоматического открывания клеток вокруг нуля, боту не понадобится)
     boolean isChecked() {
         return isChecked;
     }
 
-    private void setChecked(boolean checked) {
+
+    void setChecked(boolean checked) {
         isChecked = checked;
     }
 
@@ -178,5 +179,7 @@ class Cell extends Button {
         return myContent;
     }
 
-
+    int getNumberInArray() {
+        return numberInArray;
+    }
 }
