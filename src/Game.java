@@ -1,37 +1,38 @@
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.awt.*;
 
 public class Game extends Application {
-    LevelsGenerator levelsGenerator;
-    private double width=600;
-    private double height=600;
+    static Level level;
+    final private static int width = 600;
+    final private static int height = 600;
+
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        levelsGenerator=new LevelsGenerator(9,9,10);
+        level = new Level(9, 9, 10);
+        //level.reload();
 
 
 
-
-
-
-
-
-
-        Scene scene=new Scene(levelsGenerator.getRoot(),width,height);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(level.getScene());
         primaryStage.show();
 
     }
 
+    static public int getHeight() {
+        return height;
+    }
+
+    static public int getWidth() {
+        return width;
+    }
+
     public static void main(String[] args) {
         launch(args);
+    }
+
+    static public Level getLevel() {
+        return level;
     }
 }
