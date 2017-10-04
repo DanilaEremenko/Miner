@@ -7,6 +7,8 @@ class Content extends Label {
 
     Content(Cell cell, Color color) {
         common(cell);
+
+
     }
 
     Content(Cell cell, int nearlyMine) {
@@ -14,11 +16,12 @@ class Content extends Label {
         common(cell);
     }
 
+    //Метод для конструктора
     private void common(Cell cell) {
+        setStyle("-fx-font-size:30;");
+        //setStyle("-fx-text-alignment:center;");
         setTranslateX(cell.getTranslateX());
         setTranslateY(cell.getTranslateY());
-        setWidth(50);
-        setHeight(50);
         setVisible(false);
     }
 
