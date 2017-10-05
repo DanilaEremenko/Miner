@@ -4,7 +4,7 @@ import javafx.scene.layout.Pane;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.Random;
 //Периодически выставляется меньше мин чем надо
 
@@ -29,23 +29,28 @@ class Level {
         levelHight = hight;
         cells = new ArrayList<>();
         bombs = new ArrayList<>();
-////здесь методд
-        int[] numbersOfMines =generateNumbersOfMines();//массив, который хранит номера мин
+        for (int i = 0; i < hight; i++)
+            for (int j = 0; j < weight; j++)
+                cells.add(new Cell(0, j + 1, i + 1, i * weight + j));
 
+        for (Cell cell : cells)
+            cell.setNearlyCell(cells);
+
+        //int[] numbersOfMines = {16, 34, 68, 18, 9, 6, 66, 20, 11, 52};
+        int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++) {
                 if (contains(weight * i + j, numbersOfMines)) {
-                    cells.add(new Cell(9, j + 1, i + 1, i * weight + j));
-                    bombs.add(cells.get(cells.size() - 1));//тут лучше бы переворачивать
-                } else
-                    cells.add(new Cell(0, j + 1, i + 1, i * weight + j));
+                    cells.get(i * weight + j).setConditon(9);
+                    bombs.add(cells.get(i * weight + j));//тут лучше бы переворачивать
+                }
             }
+
 
         mainRoot = new Pane();
         root = new Pane();
         rootGameOver = new Pane(new Label("GAME OVER"));
         rootWin = new Pane(new Label("WIN"));
-
         for (Cell bomb : bombs)
             bomb.setConditions();
 
@@ -85,9 +90,9 @@ class Level {
     }
 
 
-
     //Метод для обеспечения отсутсвия повторов номеров мин
     //Необходимо избавиться/переделать
+
     private static boolean contains(int dig, int[] mass) {
         for (int number : mass)
             if (dig == number)
@@ -98,7 +103,7 @@ class Level {
     }//Проверка наличия числа в массиве
 
     //общий метод вынесенный из reload и конструктора
-    private int[] generateNumbersOfMines () {
+    private int[] generateNumbersOfMines() {
         int[] numbersOfMines = new int[minesDigit];
         int digit;//Промежуточная переменная для избежания повторения позиций мин
         for (int i = 0; i < minesDigit; i++) {
@@ -134,17 +139,17 @@ class Level {
             cell.setChecked(false);
         }
 
-            int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
+        int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
 
-            for (int i = 0; i < levelHight; i++)
-                for (int j = 0; j < levelWeight; j++) {
-                    if (contains(levelWeight * i + j, numbersOfMines)) {
+        for (int i = 0; i < levelHight; i++)
+            for (int j = 0; j < levelWeight; j++) {
+                if (contains(levelWeight * i + j, numbersOfMines)) {
 
-                        cells.get(i * levelWeight + j).setConditon(9);
-                        bombs.add(cells.get(i * levelWeight + j));
-                    }
-
+                    cells.get(i * levelWeight + j).setConditon(9);
+                    bombs.add(cells.get(i * levelWeight + j));
                 }
+
+            }
 
 
         for (Cell bomb : bombs)
@@ -186,7 +191,6 @@ class Level {
     }
 
 
-
     //Геттеры
     Scene getScene() {
         return scene;
@@ -211,6 +215,7 @@ class Level {
     static ArrayList<Cell> getBombs() {
         return bombs;
     }
+
 
 }
 

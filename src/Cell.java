@@ -11,6 +11,7 @@ class Cell extends Button {
     private boolean isChecked = false;
     final private int numberInArray;
     private boolean flag = false;//true есть флаг, false нет флага
+    private int[] nearlyCells;
 
 
     Cell(int conditon, int x, int y, int numberInArray) {
@@ -46,45 +47,60 @@ class Cell extends Button {
 
     }
 
+    //Используется после того как задан весь массив cells
+    void setNearlyCell(ArrayList<Cell> cells) {
+        nearlyCells = new int[8];
+        for (int i = 0; i < nearlyCells.length; i++)
+            nearlyCells[i] = -10;
+
+
+        if (numberInArray % Level.getLevelWeight() != 0)//Если не самая левая
+            nearlyCells[0] = numberInArray - 1;
+
+
+        if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1) //Если не самая правая
+            nearlyCells[4] = numberInArray + 1;
+
+
+        if (numberInArray / Level.getLevelWeight() != 0) {//Если не в верхней строчке
+
+            nearlyCells[2] = numberInArray - Level.getLevelWeight();
+
+            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
+                nearlyCells[3] = numberInArray - Level.getLevelWeight() + 1;
+
+            if (numberInArray % Level.getLevelWeight() != 0)
+                nearlyCells[1] = numberInArray - Level.getLevelWeight() - 1;
+
+        }
+        if (numberInArray / Level.getLevelWeight() != Level.getLevelHight() - 1) {//Если не в нижней
+            nearlyCells[6] = numberInArray + Level.getLevelWeight();
+
+            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
+                nearlyCells[5] = numberInArray + Level.getLevelWeight() + 1;
+
+            if (numberInArray % Level.getLevelWeight() != 0)
+                nearlyCells[7] = numberInArray + Level.getLevelWeight() - 1;
+
+
+        }
+
+
+    }
+
     //Проверка клетки, чисто графический метод,не подойдет для бота
     private void check() {
+        if(isChecked)
+            return;
         isChecked = true;
         setVisible(false);
         myContent.setVisible(true);
         if (conditon == 9)
             Level.gameOver();
         if (conditon == 0) {
-            if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray - 1).isChecked)
-                Level.getCells().get(numberInArray - 1).check();//Если не самая левая
-
-            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray + 1).isChecked) //Если не самая правая
-                Level.getCells().get(numberInArray + 1).check();
-
-
-            if (numberInArray / Level.getLevelWeight() != 0) {//Если не в верхней строчке
-
-                if (!Level.getCells().get(numberInArray - Level.getLevelWeight()).isChecked)
-                    Level.getCells().get(numberInArray - Level.getLevelWeight()).check();
-
-                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).isChecked)
-                    Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).check();
-
-                if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).isChecked)
-                    Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).check();
-
-            }
-            if (numberInArray / Level.getLevelWeight() != Level.getLevelHight() - 1) {//Если не в нижней
-                if (!Level.getCells().get(numberInArray + Level.getLevelWeight()).isChecked)
-                    Level.getCells().get(numberInArray + Level.getLevelWeight()).check();
-
-                if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1 && !Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).isChecked)
-                    Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).check();
-
-                if (numberInArray % Level.getLevelWeight() != 0 && !Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).isChecked)
-                    Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).check();
-
-            }
-
+            for (int number : nearlyCells)
+                if (number != -10)
+                    Level.getCells().get(number).check();
 
         }
 
@@ -115,7 +131,7 @@ class Cell extends Button {
 
     }
 
-    //Добавление к состоянию единицы
+    //Добавление к состоянию единицы,используется в setConditions
     private void addCondition() {
         if (conditon != 9)
             conditon++;
@@ -123,35 +139,11 @@ class Cell extends Button {
 
     //Установка состояния на все мины,вызывайтся на минах
     void setConditions() {
-        if (numberInArray % Level.getLevelWeight() != 0)
-            Level.getCells().get(numberInArray - 1).addCondition();//Если не самая левая
-
-        if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1) //Если не самая правая
-            Level.getCells().get(numberInArray + 1).addCondition();
+        for (int number : nearlyCells)
+            if (number != -10)
+                Level.getCells().get(number).addCondition();
 
 
-        if (numberInArray / Level.getLevelWeight() != 0) {//Если не в верхней строчке
-
-            Level.getCells().get(numberInArray - Level.getLevelWeight()).addCondition();
-
-            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
-                Level.getCells().get(numberInArray - Level.getLevelWeight() + 1).addCondition();
-
-            if (numberInArray % Level.getLevelWeight() != 0)
-                Level.getCells().get(numberInArray - Level.getLevelWeight() - 1).addCondition();
-
-        }
-        if (numberInArray / Level.getLevelWeight() != Level.getLevelHight() - 1) {//Если не в нижней
-            Level.getCells().get(numberInArray + Level.getLevelWeight()).addCondition();
-
-            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
-                Level.getCells().get(numberInArray + Level.getLevelWeight() + 1).addCondition();
-
-            if (numberInArray % Level.getLevelWeight() != 0)
-                Level.getCells().get(numberInArray + Level.getLevelWeight() - 1).addCondition();
-
-
-        }
     }
 
 
