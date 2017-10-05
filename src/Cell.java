@@ -30,15 +30,7 @@ class Cell extends Button {
 
         setOnKeyPressed(event -> {
                     if (event.getCode() == KeyCode.SPACE)
-                        if (!flag) {
-                            flag = true;
-                            setStyle(" -fx-base: #CC3333");
-                        } else {
-                            flag = false;
-                            setStyle(" -fx-base: #FAFAFA;");//
-                        }
-                    checkFlag();
-
+                        dropFlag();
                     if (event.getCode() == KeyCode.ENTER)
                         check();
 
@@ -90,7 +82,7 @@ class Cell extends Button {
 
     //Проверка клетки, чисто графический метод,не подойдет для бота
     private void check() {
-        if(isChecked)
+        if (isChecked)
             return;
         isChecked = true;
         setVisible(false);
@@ -108,13 +100,17 @@ class Cell extends Button {
     }
 
     //Проверка клетки для бота
-    int checkBot() {
+    Cell checkBot() {
 
         setVisible(false);
         myContent.setVisible(true);
+        this.isChecked = true;
+        isChecked = true;
         if (conditon == 9)
             Level.gameOver();
-        return conditon;
+
+        return this;
+
 
     }
 
@@ -146,6 +142,18 @@ class Cell extends Button {
 
     }
 
+    void dropFlag() {
+        if (!flag) {
+            flag = true;
+            setStyle(" -fx-base: #CC3333");
+        } else {
+            flag = false;
+            setStyle(" -fx-base: #FAFAFA;");//
+        }
+        checkFlag();
+
+    }
+
 
     void setConditon(int conditon) {
         this.conditon = conditon;
@@ -156,16 +164,21 @@ class Cell extends Button {
         return isChecked;
     }
 
-
     void setChecked(boolean checked) {
         isChecked = checked;
     }
-
 
     void setText() {
         myContent.setText("" + conditon);
     }
 
+    int getConditon() {
+        return conditon;
+    }
+
+    int[] getNearlyCells() {
+        return nearlyCells;
+    }
 
     Content getMyContent() {
         return myContent;

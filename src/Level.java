@@ -162,8 +162,9 @@ class Level {
 
     //Установка панели победы(при успешном прохождении игры)
     static void gameWin() {
-        root.setVisible(false);
-        rootWin.setVisible(true);
+        System.out.println("You win");
+//        root.setVisible(false);
+//        rootWin.setVisible(true);
     }
 
     // Установка панели проигрыша(при вскрытии бомбы)
