@@ -21,7 +21,7 @@ class Level {
     static private int minesDigit;//Колличество мин
     static private int levelWeight;//Число мин в ширину
     static private int levelHight;//Число мин в высоту
-
+    static private Bot myManBot;
 
     Level(int weight, int hight, int minesDigit) {
         levelWeight = weight;
@@ -66,7 +66,7 @@ class Level {
         rootWin.setVisible(false);
         mainRoot.getChildren().addAll(root, rootGameOver, rootWin);
         scene = new Scene(mainRoot, Game.getWidth(), Game.getHeight());
-        Bot myManBot = new Bot(this);
+        myManBot = new Bot();
 
         //Ниже значение кнопок
         scene.setOnKeyPressed(event -> {
@@ -149,6 +149,7 @@ class Level {
                     bombs.add(cells.get(i * levelWeight + j));
                 }
 
+                myManBot.reload();
             }
 
 
@@ -158,6 +159,9 @@ class Level {
 
         for (Cell cell : cells)
             cell.setText();
+
+
+
     }
 
     //Установка панели победы(при успешном прохождении игры)

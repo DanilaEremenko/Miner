@@ -8,7 +8,7 @@ public class Bot {
 
 
     //Возможно нужно будет переделать конструктор
-    public Bot(Level level) {
+    public Bot() {
         botCells = new ArrayList<>();
 
 
@@ -62,6 +62,9 @@ public class Bot {
         botCells.add(Level.getCells().get(numberCheckCell).checkBot());
     }
 
+    void reload(){
+        botCells.clear();
+    }
 
 }
 

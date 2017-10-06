@@ -9,7 +9,7 @@ public class Game extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Level level = new Level(9, 9, 3);
+        Level level = new Level(9, 9, 10);
 
 
 
