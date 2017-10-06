@@ -3,7 +3,6 @@ import java.util.Random;
 
 public class Bot {
 
-    private int numberStep = 0;
     private ArrayList<Cell> botCells;
 
 
@@ -19,7 +18,7 @@ public class Bot {
         //Если таковых нет рандомим
         //В if если значение элемента []cells равно колличеству мин в известных соседних клетках-вскрываем неизвестные
         boolean currentStep = easyStep();
-        if (!currentStep)
+        if (!currentStep && botCells.size()+Level.getBombs().size()!=Level.getCells().size())
             doRandom();
 
     }
@@ -28,41 +27,49 @@ public class Bot {
         boolean doSomething = false;
         ArrayList<Cell> addedCells = new ArrayList<>();
         for (Cell cell : botCells) {
-            if (cell.getConditon() == 0) {
-                for (int number : cell.getNearlyCells())
-                    if (number != -10 && !Level.getCells().get(number).isChecked())
-                        addedCells.add(Level.getCells().get(number).checkBot());
 
-                doSomething = true;
-            } else {
+            int unknownCells = 0;
+            int flagCell = 0;
 
-                int unknownCells = 0;
-                for (int number : cell.getNearlyCells()) {
-                    if (number != -10&&!Level.getCells().get(number).isChecked())
-                        unknownCells += 1;
-                }
-                if (unknownCells == cell.getConditon())
-                    for (int number : cell.getNearlyCells()) {
-                        if (number != -10&&!Level.getCells().get(number).isChecked())
-                            Level.getCells().get(number).dropFlag();
-                    }
-
+            for (int number : cell.getNearlyCells()) {
+                if (number != -10 && !Level.getCells().get(number).isChecked())
+                    unknownCells += 1;
+                if (number != -10 && Level.getCells().get(number).isFlag())
+                    flagCell += 1;
 
             }
+
+            //Ставим флаги
+            if (unknownCells == cell.getConditon()) {
+                for (int number : cell.getNearlyCells()) {
+                    if (number != -10 && !Level.getCells().get(number).isChecked() && !Level.getCells().get(number).isFlag()) {
+                        Level.getCells().get(number).setFlag(true);
+                        doSomething = true;
+                    }
+                }
+            }
+            //Вскрываем когда все мины помечены флагами
+            if (cell.getConditon() == flagCell) {
+                for (int number : cell.getNearlyCells())
+                    if (number != -10 && !Level.getCells().get(number).isChecked() && !Level.getCells().get(number).isFlag()) {
+                        addedCells.add(Level.getCells().get(number).checkBot());
+                        doSomething = true;
+                    }
+            }
+
+
         }
         botCells.addAll(addedCells);
-
         return doSomething;
-
-
     }
+
 
     private void doRandom() {
         int numberCheckCell = new Random().nextInt(Level.getLevelWeight() * Level.getLevelHight());
         botCells.add(Level.getCells().get(numberCheckCell).checkBot());
     }
 
-    void reload(){
+    void reload() {
         botCells.clear();
     }
 

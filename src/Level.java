@@ -134,6 +134,8 @@ class Level {
         bombs.clear();
         for (Cell cell : cells) {
             cell.setConditon(0);
+            cell.setFlag(false);
+            cell.setStyle(" -fx-base: #FAFAFA;");
             cell.getMyContent().setVisible(false);
             cell.setVisible(true);
             cell.setChecked(false);

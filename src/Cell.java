@@ -108,6 +108,7 @@ class Cell extends Button {
         isChecked = true;
         if (conditon == 9)
             Level.gameOver();
+        checkFlag();
 
         return this;
 
@@ -121,7 +122,6 @@ class Cell extends Button {
             if (bomb.flag)
                 c++;
         if (c == Level.getMinesDigit())
-
             Level.gameWin();
 
 
@@ -154,6 +154,10 @@ class Cell extends Button {
 
     }
 
+    void setFlag(boolean flag) {
+        this.flag = flag;
+        setStyle(" -fx-base: #CC3333");
+    }
 
     void setConditon(int conditon) {
         this.conditon = conditon;
@@ -186,5 +190,9 @@ class Cell extends Button {
 
     int getNumberInArray() {
         return numberInArray;
+    }
+
+    public boolean isFlag() {
+        return flag;
     }
 }
