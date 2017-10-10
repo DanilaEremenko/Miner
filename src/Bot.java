@@ -4,10 +4,11 @@ import java.util.Random;
 public class Bot {
 
     private ArrayList<Cell> botCells;
-
+    private int flag;
 
     //Возможно нужно будет переделать конструктор
     public Bot() {
+        flag=0;
         botCells = new ArrayList<>();
 
 
@@ -17,8 +18,12 @@ public class Bot {
         //Ведем подсчет вомзожнных ходов наверняка
         //Если таковых нет рандомим
         //В if если значение элемента []cells равно колличеству мин в известных соседних клетках-вскрываем неизвестные
+        if(Level.getMinesDigit()==flag&&botCells.size()+Level.getBombs().size()==Level.getCells().size()) {
+            System.out.println("Я уже выйграл");
+            return;
+        }
         boolean currentStep = easyStep();
-        if (!currentStep && botCells.size()+Level.getBombs().size()!=Level.getCells().size())
+        if (!currentStep )
             doRandom();
 
     }
@@ -44,6 +49,7 @@ public class Bot {
                 for (int number : cell.getNearlyCells()) {
                     if (number != -10 && !Level.getCells().get(number).isChecked() && !Level.getCells().get(number).isFlag()) {
                         Level.getCells().get(number).setFlag(true);
+                        flag++;
                         doSomething = true;
                     }
                 }
@@ -67,6 +73,8 @@ public class Bot {
     private void doRandom() {
         int numberCheckCell = new Random().nextInt(Level.getLevelWeight() * Level.getLevelHight());
         botCells.add(Level.getCells().get(numberCheckCell).checkBot());
+        if(botCells.get(botCells.size()-1).getConditon()==9)
+            System.out.println("Хозяин, я проиграл после рандомного хода.Дай мне шанс исправиться");
     }
 
     void reload() {

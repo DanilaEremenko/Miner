@@ -128,6 +128,7 @@ class Level {
 
     //Перезагрузка уровня
     void reload() {
+        System.out.println("Перезагрука уровня");
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
         root.setVisible(true);
@@ -163,12 +164,11 @@ class Level {
             cell.setText();
 
 
-
     }
 
     //Установка панели победы(при успешном прохождении игры)
     static void gameWin() {
-        System.out.println("You win");
+//        System.out.println("You win");
 //        root.setVisible(false);
 //        rootWin.setVisible(true);
     }
@@ -182,9 +182,10 @@ class Level {
     //Показывает изначальные условия(для кнопки ESC)
     private void checkAll() {
         for (Cell cell : cells) {
-            cell.setVisible(false);
-            cell.getMyContent().setVisible(true);
-
+            if (!cell.isFlag()) {
+                cell.setVisible(false);
+                cell.getMyContent().setVisible(true);
+            }
         }
         for (Cell bomb : bombs)
             System.out.print("" + bomb.getNumberInArray() + ",");
