@@ -1,5 +1,3 @@
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
 
@@ -11,20 +9,16 @@ import java.util.Random;
 
 class Level {
 
-    static private ArrayList<Cell> cells;
-    static private ArrayList<Cell> bombs;
-    static private Pane root;//Игровая панель
-    static private Pane rootGameOver;//Панель выигрыша
-    static private Pane rootWin;//Панель проигрыша
-    static private Pane mainRoot;//Панель на которой хранятся все остальные панели
-    static private Scene scene;
-    static private int minesDigit;//Колличество мин
-    static private int levelWeight;//Число мин в ширину
-    static private int levelHight;//Число мин в высоту
-    static private Bot myManBot;
+    private ArrayList<Cell> cells;
+    private ArrayList<Cell> bombs;
+    private Pane root;//Игровая панель
+    private int minesDigit;//Колличество мин
+    private int levelWidth;//Число клеток в ширину
+    private int levelHight;//Число клеток в высоту
+
 
     Level(int weight, int hight, int minesDigit) {
-        levelWeight = weight;
+        levelWidth = weight;
         this.minesDigit = minesDigit;
         levelHight = hight;
         cells = new ArrayList<>();
@@ -32,9 +26,6 @@ class Level {
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++)
                 cells.add(new Cell(0, j + 1, i + 1, i * weight + j));
-
-        for (Cell cell : cells)
-            cell.setNearlyCell(cells);
 
         //int[] numbersOfMines = {16, 34, 68, 18, 9, 6, 66, 20, 11, 52};
         int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
@@ -47,12 +38,13 @@ class Level {
             }
 
 
-        mainRoot = new Pane();
+
+        for (Cell cell : cells)
+            cell.setNearlyCell(levelWidth,levelHight);
+
         root = new Pane();
-        rootGameOver = new Pane(new Label("GAME OVER"));
-        rootWin = new Pane(new Label("WIN"));
         for (Cell bomb : bombs)
-            bomb.setConditions();
+            bomb.setConditions(cells);
 
 
         for (Cell cell : cells)
@@ -62,30 +54,6 @@ class Level {
             root.getChildren().addAll(cell, cell.getMyContent());
 
 
-        rootGameOver.setVisible(false);
-        rootWin.setVisible(false);
-        mainRoot.getChildren().addAll(root, rootGameOver, rootWin);
-        scene = new Scene(mainRoot, Game.getWidth(), Game.getHeight());
-        myManBot = new Bot();
-
-        //Ниже значение кнопок
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-
-                case B:
-                    myManBot.helpMeBot();
-                    break;
-
-                case ESCAPE:
-                    checkAll();
-                    break;
-
-                case R:
-                    this.reload();
-                    break;
-
-            }
-        });
 
     }
 
@@ -107,9 +75,9 @@ class Level {
         int[] numbersOfMines = new int[minesDigit];
         int digit;//Промежуточная переменная для избежания повторения позиций мин
         for (int i = 0; i < minesDigit; i++) {
-            digit = new Random().nextInt(levelWeight * levelHight - 1);
+            digit = new Random().nextInt(levelWidth * levelHight - 1);
             while (contains(digit, numbersOfMines))//Цикл для избежания повторения позиций мин
-                digit = new Random().nextInt(levelWeight * levelHight);
+                digit = new Random().nextInt(levelWidth * levelHight);
 
             numbersOfMines[i] = digit;
         }
@@ -129,8 +97,8 @@ class Level {
     //Перезагрузка уровня
     void reload() {
         System.out.println("Перезагрука уровня");
-        rootGameOver.setVisible(false);
-        rootWin.setVisible(false);
+        Game.getRootGameOver().setVisible(false);
+        Game.getRootWin().setVisible(false);
         root.setVisible(true);
         bombs.clear();
         for (Cell cell : cells) {
@@ -145,19 +113,19 @@ class Level {
         int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
 
         for (int i = 0; i < levelHight; i++)
-            for (int j = 0; j < levelWeight; j++) {
-                if (contains(levelWeight * i + j, numbersOfMines)) {
+            for (int j = 0; j < levelWidth; j++) {
+                if (contains(levelWidth * i + j, numbersOfMines)) {
 
-                    cells.get(i * levelWeight + j).setConditon(9);
-                    bombs.add(cells.get(i * levelWeight + j));
+                    cells.get(i * levelWidth + j).setConditon(9);
+                    bombs.add(cells.get(i * levelWidth + j));
                 }
 
-                myManBot.reload();
+                Game.getMyManBot().reload();
             }
 
 
         for (Cell bomb : bombs)
-            bomb.setConditions();
+            bomb.setConditions(cells);
 
 
         for (Cell cell : cells)
@@ -174,13 +142,13 @@ class Level {
     }
 
     // Установка панели проигрыша(при вскрытии бомбы)
-    static void gameOver() {
+    void gameOver() {
         root.setVisible(false);
-        rootGameOver.setVisible(true);
+        Game.getRootGameOver().setVisible(true);
     }
 
     //Показывает изначальные условия(для кнопки ESC)
-    private void checkAll() {
+    void checkAll() {
         for (Cell cell : cells) {
             if (!cell.isFlag()) {
                 cell.setVisible(false);
@@ -189,8 +157,8 @@ class Level {
         }
         for (Cell bomb : bombs)
             System.out.print("" + bomb.getNumberInArray() + ",");
-        rootGameOver.setVisible(false);
-        rootWin.setVisible(false);
+        Game.getRootGameOver().setVisible(false);
+        Game.getRootWin().setVisible(false);
         root.setVisible(true);
 
 
@@ -200,30 +168,28 @@ class Level {
 
 
     //Геттеры
-    Scene getScene() {
-        return scene;
-    }
-
-    static int getMinesDigit() {
+    int getMinesDigit() {
         return minesDigit;
     }
 
-    static int getLevelWeight() {
-        return levelWeight;
+    int getLevelWidth() {
+        return levelWidth;
     }
 
-    static int getLevelHight() {
+    int getLevelHight() {
         return levelHight;
     }
 
-    static ArrayList<Cell> getCells() {
+    ArrayList<Cell> getCells() {
         return cells;
     }
 
-    static ArrayList<Cell> getBombs() {
+    ArrayList<Cell> getBombs() {
         return bombs;
     }
 
-
+    Pane getRoot() {
+        return root;
+    }
 }
 

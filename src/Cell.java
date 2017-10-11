@@ -40,39 +40,39 @@ class Cell extends Button {
     }
 
     //Используется после того как задан весь массив cells
-    void setNearlyCell(ArrayList<Cell> cells) {
+    void setNearlyCell(int levelWeight, int levelHight) {
         nearlyCells = new int[8];
         for (int i = 0; i < nearlyCells.length; i++)
             nearlyCells[i] = -10;
 
 
-        if (numberInArray % Level.getLevelWeight() != 0)//Если не самая левая
+        if (numberInArray % levelWeight != 0)//Если не самая левая
             nearlyCells[0] = numberInArray - 1;
 
 
-        if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1) //Если не самая правая
+        if (numberInArray % levelWeight != levelWeight - 1) //Если не самая правая
             nearlyCells[4] = numberInArray + 1;
 
 
-        if (numberInArray / Level.getLevelWeight() != 0) {//Если не в верхней строчке
+        if (numberInArray / levelWeight != 0) {//Если не в верхней строчке
 
-            nearlyCells[2] = numberInArray - Level.getLevelWeight();
+            nearlyCells[2] = numberInArray - levelWeight;
 
-            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
-                nearlyCells[3] = numberInArray - Level.getLevelWeight() + 1;
+            if (numberInArray % levelWeight != levelWeight - 1)
+                nearlyCells[3] = numberInArray - levelWeight + 1;
 
-            if (numberInArray % Level.getLevelWeight() != 0)
-                nearlyCells[1] = numberInArray - Level.getLevelWeight() - 1;
+            if (numberInArray % levelWeight != 0)
+                nearlyCells[1] = numberInArray - levelWeight- 1;
 
         }
-        if (numberInArray / Level.getLevelWeight() != Level.getLevelHight() - 1) {//Если не в нижней
-            nearlyCells[6] = numberInArray + Level.getLevelWeight();
+        if (numberInArray / levelWeight != levelHight - 1) {//Если не в нижней
+            nearlyCells[6] = numberInArray + levelWeight;
 
-            if (numberInArray % Level.getLevelWeight() != Level.getLevelWeight() - 1)
-                nearlyCells[5] = numberInArray + Level.getLevelWeight() + 1;
+            if (numberInArray % levelWeight != levelWeight - 1)
+                nearlyCells[5] = numberInArray + levelWeight + 1;
 
-            if (numberInArray % Level.getLevelWeight() != 0)
-                nearlyCells[7] = numberInArray + Level.getLevelWeight() - 1;
+            if (numberInArray % levelWeight != 0)
+                nearlyCells[7] = numberInArray + levelWeight - 1;
 
 
         }
@@ -88,11 +88,11 @@ class Cell extends Button {
         setVisible(false);
         myContent.setVisible(true);
         if (conditon == 9)
-            Level.gameOver();
+            Game.getLevel().gameOver();
         if (conditon == 0) {
             for (int number : nearlyCells)
                 if (number != -10)
-                    Level.getCells().get(number).check();
+                    Game.getLevel().getCells().get(number).check();
 
         }
 
@@ -107,7 +107,7 @@ class Cell extends Button {
         this.isChecked = true;
         isChecked = true;
         if (conditon == 9)
-            Level.gameOver();
+            Game.getLevel().gameOver();
         checkFlag();
 
         return this;
@@ -118,10 +118,10 @@ class Cell extends Button {
     //Проверка флагов
     private void checkFlag() {
         int c = 0;
-        for (Cell bomb : Level.getBombs())
+        for (Cell bomb : Game.getLevel().getBombs())
             if (bomb.flag)
                 c++;
-        if (c == Level.getMinesDigit())
+        if (c == Game.getLevel().getMinesDigit())
             Level.gameWin();
 
 
@@ -134,15 +134,15 @@ class Cell extends Button {
     }
 
     //Установка состояния на все мины,вызывайтся на минах
-    void setConditions() {
+    void setConditions(ArrayList<Cell>cells) {
         for (int number : nearlyCells)
             if (number != -10)
-                Level.getCells().get(number).addCondition();
+                cells.get(number).addCondition();
 
 
     }
 
-    void dropFlag() {
+    private void dropFlag() {
         if (!flag) {
             flag = true;
             setStyle(" -fx-base: #CC3333");
@@ -192,7 +192,7 @@ class Cell extends Button {
         return numberInArray;
     }
 
-    public boolean isFlag() {
+    boolean isFlag() {
         return flag;
     }
 }
