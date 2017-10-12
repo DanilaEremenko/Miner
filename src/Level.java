@@ -17,18 +17,32 @@ class Level {
     private int levelHight;//Число клеток в высоту
 
 
+    Level(int weight, int hight, int[] numbersOfMines) {
+        levelWidth = weight;
+        this.minesDigit = numbersOfMines.length;
+        levelHight = hight;
+        cells = new ArrayList<>();
+        bombs = new ArrayList<>();
+        common(weight, hight, numbersOfMines);
+    }
+
+
     Level(int weight, int hight, int minesDigit) {
         levelWidth = weight;
         this.minesDigit = minesDigit;
         levelHight = hight;
         cells = new ArrayList<>();
         bombs = new ArrayList<>();
+        int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
+        common(weight, hight, numbersOfMines);
+    }
+
+    private void common(int weight, int hight, int[] numbersOfMines) {
+
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++)
                 cells.add(new Cell(0, j + 1, i + 1, i * weight + j));
 
-        //int[] numbersOfMines = {16, 34, 68, 18, 9, 6, 66, 20, 11, 52};
-        int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++) {
                 if (contains(weight * i + j, numbersOfMines)) {
@@ -38,9 +52,8 @@ class Level {
             }
 
 
-
         for (Cell cell : cells)
-            cell.setNearlyCell(levelWidth,levelHight);
+            cell.setNearlyCell(levelWidth, levelHight);
 
         root = new Pane();
         for (Cell bomb : bombs)
@@ -52,7 +65,6 @@ class Level {
 
         for (Cell cell : cells)
             root.getChildren().addAll(cell, cell.getMyContent());
-
 
 
     }
@@ -71,7 +83,7 @@ class Level {
     }//Проверка наличия числа в массиве
 
     //общий метод вынесенный из reload и конструктора
-    private int[] generateNumbersOfMines() {
+    private int[] generateNumbersOfMines(int minesDigit) {
         int[] numbersOfMines = new int[minesDigit];
         int digit;//Промежуточная переменная для избежания повторения позиций мин
         for (int i = 0; i < minesDigit; i++) {
@@ -110,7 +122,7 @@ class Level {
             cell.setChecked(false);
         }
 
-        int[] numbersOfMines = generateNumbersOfMines();//массив, который хранит номера мин
+        int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
 
         for (int i = 0; i < levelHight; i++)
             for (int j = 0; j < levelWidth; j++) {
@@ -130,6 +142,23 @@ class Level {
 
         for (Cell cell : cells)
             cell.setText();
+
+
+    }
+
+    void reloadLast(){
+        System.out.println("Перезагрузка последнего уровня");
+        Game.getRootGameOver().setVisible(false);
+        Game.getRootWin().setVisible(false);
+        root.setVisible(true);
+        for (Cell cell : cells) {
+            cell.setFlag(false);
+            cell.setStyle(" -fx-base: #FAFAFA;");
+            cell.getMyContent().setVisible(false);
+            cell.setVisible(true);
+            cell.setChecked(false);
+        }
+
 
 
     }

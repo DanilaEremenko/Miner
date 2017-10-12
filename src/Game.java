@@ -18,7 +18,9 @@ public class Game extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        level = new Level(9, 9, 10);
+        //level = new Level(9, 9, 10);
+        int []minesNumbers={5,15,24,34,57,60,64,67,70,66,67};
+        level=new Level(9,9,minesNumbers);
         mainRoot = new Pane();
         rootGameOver = new Pane(new Label("GAME OVER"));
         rootWin = new Pane(new Label("WIN"));
@@ -42,6 +44,10 @@ public class Game extends Application {
 
                 case R:
                     level.reload();
+                    break;
+
+                case T:
+                    level.reloadLast();
                     break;
 
             }
