@@ -88,11 +88,11 @@ class Cell extends Button {
         setVisible(false);
         myContent.setVisible(true);
         if (conditon == 9)
-            Game.getLevel().gameOver();
+            Controller.getLogic().gameOver();
         if (conditon == 0) {
             for (int number : nearlyCells)
                 if (number != -10)
-                    Game.getLevel().getCells().get(number).check();
+                    Controller.getLogic().getCells().get(number).check();
 
         }
 
@@ -107,7 +107,7 @@ class Cell extends Button {
         this.isChecked = true;
         isChecked = true;
         if (conditon == 9)
-            Game.getLevel().gameOver();
+            Controller.getLogic().gameOver();
         checkFlag();
 
         return this;
@@ -118,11 +118,11 @@ class Cell extends Button {
     //Проверка флагов
     private void checkFlag() {
         int c = 0;
-        for (Cell bomb : Game.getLevel().getBombs())
+        for (Cell bomb : Controller.getLogic().getBombs())
             if (bomb.flag)
                 c++;
-        if (c == Game.getLevel().getMinesDigit())
-            Level.gameWin();
+        if (c == Controller.getLogic().getMinesDigit())
+            Logic.gameWin();
 
 
     }

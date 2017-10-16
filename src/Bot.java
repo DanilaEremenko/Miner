@@ -3,14 +3,14 @@ import java.util.Random;
 
 class Bot {
 
-    private Level level;
+    private Logic logic;
     private ArrayList<Cell> botCells;
     private int flag;//Колличество найденных мин
 
     //Возможно нужно будет переделать конструктор
-    Bot(Level level) {
+    Bot(Logic logic) {
         flag=0;
-        this.level=level;
+        this.logic = logic;
         botCells = new ArrayList<>();
 
 
@@ -28,7 +28,7 @@ class Bot {
         //Ведем подсчет вомзожнных ходов наверняка
         //Если таковых нет рандомим
         //В if если значение элемента []cells равно колличеству мин в известных соседних клетках-вскрываем неизвестные
-        if (level.getMinesDigit() == flag&& botCells.size() + level.getBombs().size() == level.getCells().size() ) {
+        if (logic.getMinesDigit() == flag&& botCells.size() + logic.getBombs().size() == logic.getCells().size() ) {
             System.out.println("Я уже выйграл");
             return;
         }
@@ -47,9 +47,9 @@ class Bot {
             int flagCell = 0;
 
             for (int number : cell.getNearlyCells()) {
-                if (number != -10 && !level.getCells().get(number).isChecked())
+                if (number != -10 && !logic.getCells().get(number).isChecked())
                     unknownCells += 1;
-                if (number != -10 && level.getCells().get(number).isFlag())
+                if (number != -10 && logic.getCells().get(number).isFlag())
                     flagCell += 1;
 
             }
@@ -57,8 +57,8 @@ class Bot {
             //Ставим флаги
             if (unknownCells == cell.getConditon()) {
                 for (int number : cell.getNearlyCells()) {
-                    if (number != -10 && !level.getCells().get(number).isChecked() && !level.getCells().get(number).isFlag()) {
-                        level.getCells().get(number).setFlag(true);
+                    if (number != -10 && !logic.getCells().get(number).isChecked() && !logic.getCells().get(number).isFlag()) {
+                        logic.getCells().get(number).setFlag(true);
                         flag++;
                         doSomething = true;
                     }
@@ -67,8 +67,8 @@ class Bot {
             //Вскрываем когда все мины помечены флагами
             if (cell.getConditon() == flagCell) {
                 for (int number : cell.getNearlyCells())
-                    if (number != -10 && !level.getCells().get(number).isChecked() && !level.getCells().get(number).isFlag()) {
-                        addedCells.add(level.getCells().get(number).checkBot());
+                    if (number != -10 && !logic.getCells().get(number).isChecked() && !logic.getCells().get(number).isFlag()) {
+                        addedCells.add(logic.getCells().get(number).checkBot());
                         if(addedCells.get(addedCells.size()-1).getConditon()==9)
                             System.out.println("Хозяин, я глупый бот, перепиши меня");
                         doSomething = true;
@@ -82,8 +82,8 @@ class Bot {
     }
 
     private void doRandom() {
-        int numberCheckCell = new Random().nextInt(level.getLevelWidth() * level.getLevelHight());
-        botCells.add(level.getCells().get(numberCheckCell).checkBot());
+        int numberCheckCell = new Random().nextInt(logic.getLevelWidth() * logic.getLevelHight());
+        botCells.add(logic.getCells().get(numberCheckCell).checkBot());
         if(botCells.get(botCells.size()-1).getConditon()==9)
             System.out.println("Хозяин, я проиграл после рандомного хода.Дай мне шанс исправиться");
     }

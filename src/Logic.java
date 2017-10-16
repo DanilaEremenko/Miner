@@ -1,33 +1,28 @@
-import javafx.scene.layout.Pane;
-
-
 import java.util.ArrayList;
 
 import java.util.Random;
 //Периодически выставляется меньше мин чем надо
 
 
-class Level {
+class Logic {
 
     private ArrayList<Cell> cells;
     private ArrayList<Cell> bombs;
-    private Pane root;//Игровая панель
     private int minesDigit;//Колличество мин
     private int levelWidth;//Число клеток в ширину
     private int levelHight;//Число клеток в высоту
 
 
-    Level(int weight, int hight, int[] numbersOfMines) {
+    Logic(int weight, int hight, int[] numbersOfMines) {
         levelWidth = weight;
-        this.minesDigit = numbersOfMines.length;
         levelHight = hight;
+        this.minesDigit = numbersOfMines.length;
         cells = new ArrayList<>();
         bombs = new ArrayList<>();
         common(weight, hight, numbersOfMines);
     }
 
-
-    Level(int weight, int hight, int minesDigit) {
+    Logic(int weight, int hight, int minesDigit) {
         levelWidth = weight;
         this.minesDigit = minesDigit;
         levelHight = hight;
@@ -55,16 +50,9 @@ class Level {
         for (Cell cell : cells)
             cell.setNearlyCell(levelWidth, levelHight);
 
-        root = new Pane();
+
         for (Cell bomb : bombs)
             bomb.setConditions(cells);
-
-
-        for (Cell cell : cells)
-            cell.setText();
-
-        for (Cell cell : cells)
-            root.getChildren().addAll(cell, cell.getMyContent());
 
 
     }
@@ -109,18 +97,7 @@ class Level {
     //Перезагрузка уровня
     void reload() {
         System.out.println("Перезагрука уровня");
-        Game.getRootGameOver().setVisible(false);
-        Game.getRootWin().setVisible(false);
-        root.setVisible(true);
         bombs.clear();
-        for (Cell cell : cells) {
-            cell.setConditon(0);
-            cell.setFlag(false);
-            cell.setStyle(" -fx-base: #FAFAFA;");
-            cell.getMyContent().setVisible(false);
-            cell.setVisible(true);
-            cell.setChecked(false);
-        }
 
         int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
 
@@ -132,67 +109,43 @@ class Level {
                     bombs.add(cells.get(i * levelWidth + j));
                 }
 
-                Game.getMyManBot().reload();
+                Controller.getMyManBot().reload();
             }
-
-
-        for (Cell bomb : bombs)
-            bomb.setConditions(cells);
-
-
-        for (Cell cell : cells)
-            cell.setText();
+        if (Controller.isHaveGraphic())
+            Controller.getGraphic().reload();
 
 
     }
 
-    void reloadLast(){
+    void reloadLast() {
         System.out.println("Перезагрузка последнего уровня");
-        Game.getRootGameOver().setVisible(false);
-        Game.getRootWin().setVisible(false);
-        root.setVisible(true);
-        for (Cell cell : cells) {
-            cell.setFlag(false);
-            cell.setStyle(" -fx-base: #FAFAFA;");
-            cell.getMyContent().setVisible(false);
-            cell.setVisible(true);
-            cell.setChecked(false);
-        }
-
-
+        if (Controller.isHaveGraphic())
+            Controller.getGraphic().reloadLast();
 
     }
 
     //Установка панели победы(при успешном прохождении игры)
     static void gameWin() {
-//        System.out.println("You win");
-//        root.setVisible(false);
-//        rootWin.setVisible(true);
+        System.out.println("Победа");
+        if (Controller.isHaveGraphic())
+            Controller.getGraphic().gameWin();
     }
 
     // Установка панели проигрыша(при вскрытии бомбы)
     void gameOver() {
-        root.setVisible(false);
-        Game.getRootGameOver().setVisible(true);
+        System.out.println("Поражение");
+        if (Controller.isHaveGraphic())
+            Controller.getGraphic().gameOver();
     }
 
     //Показывает изначальные условия(для кнопки ESC)
     void checkAll() {
-        for (Cell cell : cells) {
-            if (!cell.isFlag()) {
-                cell.setVisible(false);
-                cell.getMyContent().setVisible(true);
-            }
-        }
         for (Cell bomb : bombs)
             System.out.print("" + bomb.getNumberInArray() + ",");
-        Game.getRootGameOver().setVisible(false);
-        Game.getRootWin().setVisible(false);
-        root.setVisible(true);
-
 
         System.out.println("Колличество бомб " + bombs.size());
-
+        if (Controller.isHaveGraphic())
+            Controller.getGraphic().checkAll();
     }
 
 
@@ -217,8 +170,6 @@ class Level {
         return bombs;
     }
 
-    Pane getRoot() {
-        return root;
-    }
+
 }
 
