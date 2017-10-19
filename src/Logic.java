@@ -32,6 +32,7 @@ class Logic {
         common(weight, hight, numbersOfMines);
     }
 
+    //Общий метод использующийся в конструкторах
     private void common(int weight, int hight, int[] numbersOfMines) {
 
         for (int i = 0; i < hight; i++)
@@ -60,17 +61,16 @@ class Logic {
 
     //Метод для обеспечения отсутсвия повторов номеров мин
     //Необходимо избавиться/переделать
-
-    static boolean contains(int dig, int[] mass) {
+    private static boolean contains(int dig, int[] mass) {
         for (int number : mass)
             if (dig == number)
                 return true;
 
         return false;
 
-    }//Проверка наличия числа в массиве
+    }
 
-    //общий метод вынесенный из reload и конструктора
+    //Возвращает массив с номерами мин
     private int[] generateNumbersOfMines(int minesDigit) {
         int[] numbersOfMines = new int[minesDigit];
         int digit;//Промежуточная переменная для избежания повторения позиций мин
@@ -111,16 +111,12 @@ class Logic {
                     cells.get(i * levelWidth + j).setConditon(0);
 
             }
-        Controller.getMyManBot().reload();
-        Controller.getGraphic().reload();
-
 
     }
 
+    //Перезагрузка последнего уровня
     void reloadLast() {
         System.out.println("Перезагрузка последнего уровня");
-        Controller.getGraphic().reloadLast();
-
     }
 
     //Установка панели победы(при успешном прохождении игры)
@@ -135,13 +131,12 @@ class Logic {
         Controller.getGraphic().gameOver();
     }
 
-    //Показывает изначальные условия(для кнопки ESC)
+    //Показывает условия(для кнопки ESC)
     void checkAll() {
         for (Cell bomb : bombs)
             System.out.print("" + bomb.getNumberInArray() + ",");
 
         System.out.println("Колличество бомб " + bombs.size());
-        Controller.getGraphic().checkAll();
     }
 
 

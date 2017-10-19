@@ -60,6 +60,7 @@ public class Graphic {
 
     }
 
+    //Перезагрузка последнего уровня
     void reloadLast() {
         System.out.println("Перезагрузка последнего уровня");
         rootGameOver.setVisible(false);

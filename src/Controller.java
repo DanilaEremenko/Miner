@@ -1,8 +1,6 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 //Кусок с кучей if давно пора закинуть в общий метод(используется в Bot и Cell для получения индексов соседних клеток
 
@@ -31,14 +29,18 @@ public class Controller extends Application {
 
                 case ESCAPE:
                     logic.checkAll();
+                    graphic.checkAll();
                     break;
 
                 case R:
                     logic.reload();
+                    myManBot.reload();
+                    graphic.reload();
                     break;
 
                 case T:
                     logic.reloadLast();
+                    graphic.reloadLast();
                     break;
 
             }
