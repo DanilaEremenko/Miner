@@ -3,6 +3,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 class Cell extends Button {
@@ -39,7 +40,7 @@ class Cell extends Button {
 
     }
 
-    //Используется после того как задан весь массив cells
+    //Используется после того как задан весь массив cells, для определения массива номеров клеток, находящихся рядом
     void setNearlyCell(int levelWeight, int levelHight) {
         nearlyCells = new int[8];
         for (int i = 0; i < nearlyCells.length; i++)
@@ -80,7 +81,7 @@ class Cell extends Button {
 
     }
 
-    //Проверка клетки, чисто графический метод,не подойдет для бота
+    //Проверка клетки,не для бота
     private void check() {
         if (isChecked)
             return;
@@ -115,7 +116,22 @@ class Cell extends Button {
 
     }
 
-    //Проверка флагов
+    //Рандом по одном из клеток находящихся рядом
+    Cell checkNearlyCell() {
+        int numberCheck = 0;
+        for (int i = 0; i < nearlyCells.length; i++)
+            if (nearlyCells[i] != -10) {
+                numberCheck = nearlyCells[i];
+                break;
+            }
+
+        return Controller.getLogic().getCells().get(numberCheck).checkBot();
+
+    }
+
+
+
+    //Проверка колличества флагов
     private void checkFlag() {
         int c = 0;
         for (Cell bomb : Controller.getLogic().getBombs())
@@ -142,6 +158,7 @@ class Cell extends Button {
 
     }
 
+    //Установка/снятие флага
     private void dropFlag() {
         if (!flag) {
             flag = true;
@@ -154,18 +171,15 @@ class Cell extends Button {
 
     }
 
+    //Установка флага(для бота)
     void setFlag(boolean flag) {
         this.flag = flag;
         setStyle(" -fx-base: #CC3333");
     }
 
+    //Сеттеры, геттеры, проверки
     void setConditon(int conditon) {
         this.conditon = conditon;
-    }
-
-    //Открыли ли клетку(для автоматического открывания клеток вокруг нуля, боту не понадобится)
-    boolean isChecked() {
-        return isChecked;
     }
 
     void setChecked(boolean checked) {
@@ -195,4 +209,10 @@ class Cell extends Button {
     boolean isFlag() {
         return flag;
     }
+
+    //Открыли ли клетку(для автоматического открывания клеток вокруг нуля, боту не понадобится)
+    boolean isChecked() {
+        return isChecked;
+    }
+
 }
