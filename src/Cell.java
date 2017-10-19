@@ -12,7 +12,7 @@ class Cell extends Button {
     private boolean isChecked = false;
     final private int numberInArray;
     private boolean flag = false;//true есть флаг, false нет флага
-    private int[] nearlyCells;
+    private int[] nearlyCells;//Номера клеток, находящихся рядом
 
 
     Cell(int conditon, int x, int y, int numberInArray) {
