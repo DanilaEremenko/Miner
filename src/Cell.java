@@ -62,7 +62,7 @@ class Cell extends Button {
                 nearlyCells[3] = numberInArray - levelWeight + 1;
 
             if (numberInArray % levelWeight != 0)
-                nearlyCells[1] = numberInArray - levelWeight- 1;
+                nearlyCells[1] = numberInArray - levelWeight - 1;
 
         }
         if (numberInArray / levelWeight != levelHight - 1) {//Если не в нижней
@@ -101,13 +101,13 @@ class Cell extends Button {
 
     //Проверка клетки для бота
     Cell checkBot() {
-
         setVisible(false);
         myContent.setVisible(true);
         this.isChecked = true;
         isChecked = true;
         if (conditon == 9)
-            Controller.getLogic().gameOver();
+            setStyle(" -fx-base: #1111DD;");
+        //Controller.getLogic().gameOver();
         checkFlag();
 
         return this;
@@ -134,7 +134,7 @@ class Cell extends Button {
     }
 
     //Установка состояния на все мины,вызывайтся на минах
-    void setConditions(ArrayList<Cell>cells) {
+    void setConditions(ArrayList<Cell> cells) {
         for (int number : nearlyCells)
             if (number != -10)
                 cells.get(number).addCondition();

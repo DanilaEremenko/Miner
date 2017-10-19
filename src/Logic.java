@@ -61,7 +61,7 @@ class Logic {
     //Метод для обеспечения отсутсвия повторов номеров мин
     //Необходимо избавиться/переделать
 
-    private static boolean contains(int dig, int[] mass) {
+    static boolean contains(int dig, int[] mass) {
         for (int number : mass)
             if (dig == number)
                 return true;
@@ -107,10 +107,11 @@ class Logic {
 
                     cells.get(i * levelWidth + j).setConditon(9);
                     bombs.add(cells.get(i * levelWidth + j));
-                }
+                } else
+                    cells.get(i * levelWidth + j).setConditon(0);
 
-                Controller.getMyManBot().reload();
             }
+        Controller.getMyManBot().reload();
         if (Controller.isHaveGraphic())
             Controller.getGraphic().reload();
 

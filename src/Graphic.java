@@ -32,7 +32,6 @@ public class Graphic {
 
         for (Cell cell : logic.getCells())
             root.getChildren().addAll(cell, cell.getMyContent());
-        Controller.setHaveGraphic(true);
 
     }
 
@@ -43,7 +42,6 @@ public class Graphic {
         rootWin.setVisible(false);
         root.setVisible(true);
         for (Cell cell : logic.getCells()) {
-            cell.setConditon(0);
             cell.setFlag(false);
             cell.setStyle(" -fx-base: #FAFAFA;");
             cell.getMyContent().setVisible(false);
