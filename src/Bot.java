@@ -7,8 +7,8 @@ class Bot {
     private ArrayList<Cell> botCells;
     private int flag;//Колличество найденных мин
     private boolean[] cellThatBotKnow;//true-значит клетка вскрыта, либо помечена флагом
-    private double bestProbabilitys;//Вероятность рандома по мине в клетке
-    private int numberOfBestProbabilities;
+    private double bestProbabilitys;//Наименьшая вероятность рандома по мине при рандоме вокруг клетки
+    private int numberOfBestProbabilities;//Номер этой самой клетки
 
     Bot(Logic logic) {
         bestProbabilitys = 1;
@@ -107,7 +107,6 @@ class Bot {
     }
 
 
-
     //Рандомный ход
     private void doRandom() {
         //Выбираем лучший рандом из пары "Рандом вокруг клетки" и "Рандома по полю всех неизвестных"
@@ -127,6 +126,8 @@ class Bot {
             gameOver = true;
             System.out.println("Хозяин, я проиграл после рандомного хода.Дай мне шанс исправиться");
         }
+        bestProbabilitys = 1;
+
     }
 
 
