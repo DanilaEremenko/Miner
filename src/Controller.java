@@ -12,8 +12,12 @@ public class Controller extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //Тест №1+к этому сказать что в центральной клетке 1
+        //        int[] minesNumbers = {0,1,2,3,4,5,6,9,10,14,15,19,20,21,22,23,24};
+        //        logic = new Logic(5,5 , minesNumbers);
+
         //logic = new Logic(9, 9, 10);
-        int[] minesNumbers = {5, 15, 24, 34, 57, 60, 64, 67, 70, 66, 67};
+        int[] minesNumbers = {5, 15, 24, 34, 57, 60, 64, 67, 70, 66, 67};//для теста
         logic = new Logic(9, 9, minesNumbers);
         graphic = new Graphic(logic);
         myManBot = new Bot(logic);
@@ -40,6 +44,7 @@ public class Controller extends Application {
 
                 case T:
                     logic.reloadLast();
+                    myManBot.reload();
                     graphic.reloadLast();
                     break;
 
