@@ -19,8 +19,8 @@ class Bot {
     }
 
     void reload() {
-        for (boolean cell:cellThatBotKnow)
-            cell=false;
+        for (int i = 0; i < cellThatBotKnow.length; i++)
+            cellThatBotKnow[i] = false;
 
         botCells.clear();
         flag = 0;
