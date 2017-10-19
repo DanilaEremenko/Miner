@@ -92,12 +92,13 @@ public class Graphic {
     //Показывает изначальные условия(для кнопки ESC)
     void checkAll() {
         for (Cell cell : logic.getCells()) {
-            if (!cell.isFlag()) {
+            if (cell.getConditon() == 9&&!cell.isFlag())
+                cell.setStyle(" -fx-base: #1111DD");
+            else if (!cell.isFlag()) {
                 cell.setVisible(false);
                 cell.getMyContent().setVisible(true);
             }
         }
-
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
         root.setVisible(true);

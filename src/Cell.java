@@ -88,7 +88,7 @@ class Cell extends Button {
         this.isChecked = true;
         isChecked = true;
         if (conditon == 9)
-            setStyle(" -fx-base: #1111DD;");
+            setStyle(" -fx-base: #1111DD");
         //Controller.getLogic().gameOver();
         checkFlag();
 
