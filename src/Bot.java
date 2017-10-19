@@ -3,14 +3,14 @@ import java.util.Random;
 
 class Bot {
     private Random random;
-    private boolean gameOver = false;
+    private boolean gameOver = false;//при вызове бота на уже решенном полеЛ
     private Logic logic;
-    private ArrayList<Cell> botCells;
+    private ArrayList<Cell> botCells;//Клетки раскрыте ботом
     private int flag;//Колличество найденных мин
     private boolean[] cellThatBotKnow;//true-значит клетка вскрыта, либо помечена флагом
     private Probabilities bestProbabilitys;//Наименьшая вероятность рандома по мине при рандоме вокруг клетки
     private Probabilities currentProbabilities;
-    private Probabilities randomProbabilities;
+    private Probabilities randomProbabilities;//Вероятность рандома по мине при рандоме по всем нераскрытым клеткам
     private int numberOfBestProbabilities;//Номер этой самой клетки
 
     Bot(Logic logic) {

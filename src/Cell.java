@@ -81,6 +81,46 @@ class Cell extends Button {
 
     }
 
+    //Проверка клетки для бота
+    Cell checkBot() {
+        setVisible(false);
+        myContent.setVisible(true);
+        this.isChecked = true;
+        isChecked = true;
+        if (conditon == 9)
+            setStyle(" -fx-base: #1111DD;");
+        //Controller.getLogic().gameOver();
+        checkFlag();
+
+        return this;
+
+
+    }
+
+    //Рандом по одной из клеток находящихся рядом для бота
+    Cell checkNearlyCell(Random random) {
+        int numberCheck;
+        int i = random.nextInt(7);
+        while (nearlyCells[i] == -10 || Controller.getLogic().getCells().get(nearlyCells[i]).isChecked
+                || Controller.getLogic().getCells().get(nearlyCells[i]).isFlag())
+            i = random.nextInt(7);
+
+        numberCheck = nearlyCells[i];
+
+
+        System.out.println("рандом вокруг клетки "+numberCheck);
+        return Controller.getLogic().getCells().get(numberCheck).checkBot();
+
+    }
+
+    //Установка флага(для бота)
+    void setFlag(boolean flag) {
+        this.flag = flag;
+        setStyle(" -fx-base: #CC3333");
+    }
+
+
+
     //Проверка клетки,не для бота
     private void check() {
         if (isChecked)
@@ -100,41 +140,8 @@ class Cell extends Button {
 
     }
 
-    //Проверка клетки для бота
-    Cell checkBot() {
-        setVisible(false);
-        myContent.setVisible(true);
-        this.isChecked = true;
-        isChecked = true;
-        if (conditon == 9)
-            setStyle(" -fx-base: #1111DD;");
-        //Controller.getLogic().gameOver();
-        checkFlag();
-
-        return this;
-
-
-    }
-
-    //Рандом по одном из клеток находящихся рядом
-    Cell checkNearlyCell(Random random) {
-        int numberCheck;
-        int i = random.nextInt(7);
-        while (nearlyCells[i] == -10 || Controller.getLogic().getCells().get(nearlyCells[i]).isChecked
-                || Controller.getLogic().getCells().get(nearlyCells[i]).isFlag())
-            i = random.nextInt(7);
-
-        numberCheck = nearlyCells[i];
-
-
-        System.out.println("рандом вокруг клетки "+numberCheck);
-        return Controller.getLogic().getCells().get(numberCheck).checkBot();
-
-    }
-
 
     //Проверка колличества флагов
-
     private void checkFlag() {
         int c = 0;
         for (Cell bomb : Controller.getLogic().getBombs())
@@ -161,7 +168,7 @@ class Cell extends Button {
 
     }
 
-    //Установка/снятие флага
+    //Установка/снятие флага(для игрока)
     private void dropFlag() {
         if (!flag) {
             flag = true;
@@ -174,11 +181,6 @@ class Cell extends Button {
 
     }
 
-    //Установка флага(для бота)
-    void setFlag(boolean flag) {
-        this.flag = flag;
-        setStyle(" -fx-base: #CC3333");
-    }
 
     //Сеттеры, геттеры, проверки
     void setConditon(int conditon) {
