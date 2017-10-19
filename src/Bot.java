@@ -7,15 +7,14 @@ class Bot {
     private ArrayList<Cell> botCells;
     private int flag;//Колличество найденных мин
     private boolean[] cellThatBotKnow;//true-значит клетка вскрыта, либо помечена флагом
-    private double[] probabilitys;//Вероятность рандома по мине в клетке
-
+    private double bestProbabilitys;//Вероятность рандома по мине в клетке
+    private int numberOfBestProbabilities;
 
     Bot(Logic logic) {
-        probabilitys = new double[logic.getLevelHight() * logic.getLevelWidth()];
+        bestProbabilitys = 1;
         cellThatBotKnow = new boolean[logic.getLevelHight() * logic.getLevelWidth()];
         for (int i = 0; i < cellThatBotKnow.length; i++)
             cellThatBotKnow[i] = false;
-
         flag = 0;
         this.logic = logic;
         botCells = new ArrayList<>();
@@ -92,33 +91,28 @@ class Bot {
                         doSomething = true;
                     }
             }
-            //Расчитываем для каждой клетки вероятность попадания в мину при рандом(для метода doRandom
-            if (unknownCells != 0)
-                probabilitys[cell.getNumberInArray()] = cell.getConditon() / unknownCells;
+            //Расчитываем наименьшную вероятность попадания в мину вокруг какой-либо клетки
+            if (unknownCells != 0) {
+                double currentProbability = cell.getConditon() / unknownCells;
+                if (bestProbabilitys > currentProbability) {
+                    bestProbabilitys = currentProbability;
+                    numberOfBestProbabilities = cell.getNumberInArray();
+                }
+            }
         }
-
 
         if (!addedCells.isEmpty())
             botCells.addAll(addedCells);
         return doSomething;
     }
 
+
+
     //Рандомный ход
     private void doRandom() {
-        int numberOfGoodProbabilities = 0;//номер клетки с наилучшей вероятностью
-        double goodprobabilities = 2;//наилучшая вероятность
-
-        //Находим наилучшую вероятность рандома вокруг какой-либо конкретной клетки
-        for (int i = 0; i < probabilitys.length; i++)
-            if (probabilitys[i] < goodprobabilities) {
-                goodprobabilities = probabilitys[i];
-                numberOfGoodProbabilities = i;
-            }
-
-
         //Выбираем лучший рандом из пары "Рандом вокруг клетки" и "Рандома по полю всех неизвестных"
-        if (goodprobabilities < (logic.getMinesDigit() - flag) / (logic.getLevelHight() * logic.getLevelWidth() - botCells.size())) {
-            botCells.add(logic.getCells().get(numberOfGoodProbabilities).checkNearlyCell());
+        if (bestProbabilitys < (logic.getMinesDigit() - flag) / (logic.getLevelHight() * logic.getLevelWidth() - botCells.size())) {
+            botCells.add(logic.getCells().get(numberOfBestProbabilities).checkNearlyCell());
         } else {
             int numberCheckCell;//Номер клетки которую будем вскрывать
             numberCheckCell = new Random().nextInt(logic.getLevelWidth() * logic.getLevelHight());
