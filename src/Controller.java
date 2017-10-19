@@ -7,7 +7,6 @@ import java.awt.event.KeyListener;
 //Кусок с кучей if давно пора закинуть в общий метод(используется в Bot и Cell для получения индексов соседних клеток
 
 public class Controller extends Application {
-    static private boolean haveGraphic = false;
     static private Graphic graphic;
     static private Logic logic;
     static private Bot myManBot;
@@ -20,39 +19,7 @@ public class Controller extends Application {
         logic = new Logic(9, 9, minesNumbers);
         graphic = new Graphic(logic);
         myManBot = new Bot(logic);
-        haveGraphic=true;
 
-        KeyListener keyListener = new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_B:
-                        myManBot.helpMeBot();
-                        break;
-                    case KeyEvent.VK_T:
-                        logic.reloadLast();
-                        break;
-                    case KeyEvent.VK_SPACE:
-                        logic.checkAll();
-                        break;
-                    case KeyEvent.VK_R:
-                        logic.reload();
-                        break;
-
-                }
-
-            }
-
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        };
 
         //Ниже значение кнопок
         graphic.getScene().setOnKeyPressed(event -> {
@@ -79,12 +46,7 @@ public class Controller extends Application {
 
 
         primaryStage.setScene(graphic.getScene());
-        if (haveGraphic)
-            primaryStage.show();
-        else
-            while (!myManBot.isGameOver())
-                myManBot.helpMeBot();
-
+        primaryStage.show();
 
 
     }
@@ -94,9 +56,6 @@ public class Controller extends Application {
         launch(args);
     }
 
-    static void setHaveGraphic(boolean haveGraphic) {
-        Controller.haveGraphic = haveGraphic;
-    }
 
     static Bot getMyManBot() {
         return myManBot;
@@ -110,8 +69,5 @@ public class Controller extends Application {
         return graphic;
     }
 
-    static boolean isHaveGraphic() {
-        return haveGraphic;
-    }
 }
 

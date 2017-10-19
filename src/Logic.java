@@ -112,31 +112,27 @@ class Logic {
 
             }
         Controller.getMyManBot().reload();
-        if (Controller.isHaveGraphic())
-            Controller.getGraphic().reload();
+        Controller.getGraphic().reload();
 
 
     }
 
     void reloadLast() {
         System.out.println("Перезагрузка последнего уровня");
-        if (Controller.isHaveGraphic())
-            Controller.getGraphic().reloadLast();
+        Controller.getGraphic().reloadLast();
 
     }
 
     //Установка панели победы(при успешном прохождении игры)
     static void gameWin() {
         System.out.println("Победа");
-        if (Controller.isHaveGraphic())
-            Controller.getGraphic().gameWin();
+        Controller.getGraphic().gameWin();
     }
 
     // Установка панели проигрыша(при вскрытии бомбы)
     void gameOver() {
         System.out.println("Поражение");
-        if (Controller.isHaveGraphic())
-            Controller.getGraphic().gameOver();
+        Controller.getGraphic().gameOver();
     }
 
     //Показывает изначальные условия(для кнопки ESC)
@@ -145,8 +141,7 @@ class Logic {
             System.out.print("" + bomb.getNumberInArray() + ",");
 
         System.out.println("Колличество бомб " + bombs.size());
-        if (Controller.isHaveGraphic())
-            Controller.getGraphic().checkAll();
+        Controller.getGraphic().checkAll();
     }
 
 
