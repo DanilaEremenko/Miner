@@ -2,22 +2,29 @@ import java.util.ArrayList;
 import java.util.Random;
 
 class Bot {
+    private Random random;
     private boolean gameOver = false;
     private Logic logic;
     private ArrayList<Cell> botCells;
     private int flag;//Колличество найденных мин
     private boolean[] cellThatBotKnow;//true-значит клетка вскрыта, либо помечена флагом
-    private double bestProbabilitys;//Наименьшая вероятность рандома по мине при рандоме вокруг клетки
+    private Probabilities bestProbabilitys;//Наименьшая вероятность рандома по мине при рандоме вокруг клетки
+    private Probabilities currentProbabilities;
+    private Probabilities randomProbabilities;
     private int numberOfBestProbabilities;//Номер этой самой клетки
 
     Bot(Logic logic) {
-        bestProbabilitys = 1;
+        currentProbabilities = new Probabilities(1, 1);
+        bestProbabilitys = new Probabilities(1, 1);
+        randomProbabilities = new Probabilities(1, 1);
         cellThatBotKnow = new boolean[logic.getLevelHight() * logic.getLevelWidth()];
         for (int i = 0; i < cellThatBotKnow.length; i++)
             cellThatBotKnow[i] = false;
         flag = 0;
         this.logic = logic;
         botCells = new ArrayList<>();
+        random = new Random();
+        botCells.add(logic.getCells().get(12).checkBot());
     }
 
     //Перезагрузка бота
@@ -25,6 +32,9 @@ class Bot {
         for (int i = 0; i < cellThatBotKnow.length; i++)
             cellThatBotKnow[i] = false;
 
+        currentProbabilities.set(1, 1);
+        bestProbabilitys.set(1, 1);
+        randomProbabilities.set(1, 1);
         botCells.clear();
         flag = 0;
         gameOver = false;
@@ -46,6 +56,8 @@ class Bot {
         boolean currentStep = easyStep();
         if (!currentStep)
             doRandom();
+        numberOfBestProbabilities = -1;
+        bestProbabilitys.set(1, 1);
 
     }
 
@@ -89,18 +101,21 @@ class Bot {
                             System.out.println("Хозяин, я глупый бот, перепиши меня");
                         }
                         doSomething = true;
+                        //Убрать комменатрий чтобы бот делал 1 ход за вызов
+                        //botCells.addAll(addedCells);
+                        //return doSomething;
                     }
             }
             //Расчитываем наименьшную вероятность попадания в мину вокруг какой-либо клетки
-            if (unknownCells != 0) {
-                double currentProbability = cell.getConditon() / unknownCells;
-                if (bestProbabilitys > currentProbability) {
-                    bestProbabilitys = currentProbability;
-                    numberOfBestProbabilities = cell.getNumberInArray();
-                }
+            if (cell.getConditon() != 0 && unknownCells != flagCell) {
+                currentProbabilities.set(cell.getConditon(), unknownCells);
+                if (bestProbabilitys.compare(currentProbabilities) == 1)
+                    bestProbabilitys.set(currentProbabilities.getNumerator(), currentProbabilities.getDenominator());
+                numberOfBestProbabilities = cell.getNumberInArray();
+
             }
         }
-
+        //Добавляем раскрытые клетки в массив
         if (!addedCells.isEmpty())
             botCells.addAll(addedCells);
         return doSomething;
@@ -109,15 +124,27 @@ class Bot {
 
     //Рандомный ход
     private void doRandom() {
+        //Выход из игры если нашли все мины
+        if (flag == logic.getMinesDigit()) {
+            gameOver = true;
+            return;
+        }
         //Выбираем лучший рандом из пары "Рандом вокруг клетки" и "Рандома по полю всех неизвестных"
-        if (bestProbabilitys < (logic.getMinesDigit() - flag) / (logic.getLevelHight() * logic.getLevelWidth() - botCells.size())) {
-            botCells.add(logic.getCells().get(numberOfBestProbabilities).checkNearlyCell());
-        } else {
+        randomProbabilities.set(logic.getMinesDigit() - flag, logic.getLevelHight() * logic.getLevelWidth() - botCells.size() - flag);
+        //Если выгоднее рандомить вокруг какой-то клетки
+        if (bestProbabilitys.compare(randomProbabilities) == -1) {
+            if (numberOfBestProbabilities != -1)
+                botCells.add(logic.getCells().get(numberOfBestProbabilities).checkNearlyCell(random));
+        } else////Если выгоднее рандомить по полю
+        {
             int numberCheckCell;//Номер клетки которую будем вскрывать
-            numberCheckCell = new Random().nextInt(logic.getLevelWidth() * logic.getLevelHight());
+            numberCheckCell = random.nextInt(logic.getLevelWidth() * logic.getLevelHight());
             while (cellThatBotKnow[numberCheckCell])//Рандомим еще раз, пока не попадаем в нераскрытую клетку
-                numberCheckCell = new Random().nextInt(logic.getLevelWidth() * logic.getLevelHight());
+                numberCheckCell = random.nextInt(logic.getLevelWidth() * logic.getLevelHight());
+            System.out.println("Рандом по полю " + randomProbabilities.toString());
+            System.out.println("Рандом по клетке бы был " + bestProbabilitys.toString());
             botCells.add(logic.getCells().get(numberCheckCell).checkBot());
+
         }
 
 
@@ -126,12 +153,63 @@ class Bot {
             gameOver = true;
             System.out.println("Хозяин, я проиграл после рандомного хода.Дай мне шанс исправиться");
         }
-        bestProbabilitys = 1;
-
+        if (flag == logic.getMinesDigit())
+            gameOver = true;
     }
 
+    //для хранения вероятностей
+    class Probabilities {
+        private int numerator;
+        private int denominator;
 
+        Probabilities(int numerator, int denominator) {
+            this.numerator = numerator;
+            this.denominator = denominator;
+        }
+
+        Probabilities() {
+        }
+
+
+        int compare(Probabilities probabilities2) {
+            if (this.getDenominator() == 0 || probabilities2.getDenominator() == 0)
+                return 0;
+            int chisl1 = this.getNumerator() * probabilities2.getDenominator();
+            int chisl2 = probabilities2.getNumerator() * this.getDenominator();
+            return Integer.compare(chisl1, chisl2);
+        }
+
+        @Override
+        public String toString() {
+            return numerator + "/" + denominator;
+        }
+
+        void set(int numerator, int denominator) {
+            this.numerator = numerator;
+            this.denominator = denominator;
+        }
+
+        void setNumerator(int numerator) {
+            this.numerator = numerator;
+        }
+
+        void setDenominator(int denominator) {
+            this.denominator = denominator;
+        }
+
+        int getDenominator() {
+            return denominator;
+        }
+
+        int getNumerator() {
+            return numerator;
+        }
+
+
+    }
 }
+
+
 
 
 
