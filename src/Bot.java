@@ -24,6 +24,7 @@ class Bot {
         this.logic = logic;
         botCells = new ArrayList<>();
         random = new Random();
+        //для теста
         botCells.add(logic.getCells().get(12).checkBot());
     }
 
@@ -38,6 +39,8 @@ class Bot {
         botCells.clear();
         flag = 0;
         gameOver = false;
+        //Для теста
+        botCells.add(logic.getCells().get(12).checkBot());
     }
 
     //Вызов бота
@@ -56,6 +59,9 @@ class Bot {
         boolean currentStep = easyStep();
         if (!currentStep)
             doRandom();
+
+        if (flag == logic.getMinesDigit()||logic.getCells().size()-botCells.size()==logic.getMinesDigit())
+            gameOver = true;
         numberOfBestProbabilities = -1;
         bestProbabilitys.set(1, 1);
 
@@ -109,9 +115,10 @@ class Bot {
             //Расчитываем наименьшную вероятность попадания в мину вокруг какой-либо клетки
             if (cell.getConditon() != 0 && unknownCells != flagCell) {
                 currentProbabilities.set(cell.getConditon(), unknownCells);
-                if (bestProbabilitys.compare(currentProbabilities) == 1)
+                if (bestProbabilitys.compare(currentProbabilities) == 1) {
                     bestProbabilitys.set(currentProbabilities.getNumerator(), currentProbabilities.getDenominator());
-                numberOfBestProbabilities = cell.getNumberInArray();
+                    numberOfBestProbabilities = cell.getNumberInArray();
+                }
 
             }
         }
@@ -135,26 +142,26 @@ class Bot {
         if (bestProbabilitys.compare(randomProbabilities) == -1) {
             if (numberOfBestProbabilities != -1)
                 botCells.add(logic.getCells().get(numberOfBestProbabilities).checkNearlyCell(random));
+            System.out.println("Выбрал Рандом по клетке " + bestProbabilitys.toString());
+            System.out.println("Рандом по полю " + randomProbabilities.toString());
         } else////Если выгоднее рандомить по полю
         {
             int numberCheckCell;//Номер клетки которую будем вскрывать
             numberCheckCell = random.nextInt(logic.getLevelWidth() * logic.getLevelHight());
             while (cellThatBotKnow[numberCheckCell])//Рандомим еще раз, пока не попадаем в нераскрытую клетку
                 numberCheckCell = random.nextInt(logic.getLevelWidth() * logic.getLevelHight());
-            System.out.println("Рандом по полю " + randomProbabilities.toString());
-            System.out.println("Рандом по клетке бы был " + bestProbabilitys.toString());
+            System.out.println("Выбрал Рандом по полю " + randomProbabilities.toString());
+            System.out.println("Рандом по клетке " + bestProbabilitys.toString());
             botCells.add(logic.getCells().get(numberCheckCell).checkBot());
 
         }
-
 
         //Если вскрыли бомбу проигрываем
         if (botCells.get(botCells.size() - 1).getConditon() == 9) {
             gameOver = true;
             System.out.println("Хозяин, я проиграл после рандомного хода.Дай мне шанс исправиться");
         }
-        if (flag == logic.getMinesDigit())
-            gameOver = true;
+
     }
 
     //для хранения вероятностей

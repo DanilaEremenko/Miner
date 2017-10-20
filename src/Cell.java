@@ -117,21 +117,24 @@ class Cell extends Button {
     }
 
     //Рандом по одном из клеток находящихся рядом
-    Cell checkNearlyCell() {
-        int numberCheck = 0;
-        for (int i = 0; i < nearlyCells.length; i++)
-            if (nearlyCells[i] != -10) {
-                numberCheck = nearlyCells[i];
-                break;
-            }
+    Cell checkNearlyCell(Random random) {
+        int numberCheck;
+        int i = random.nextInt(7);
+        while (nearlyCells[i] == -10 || Controller.getLogic().getCells().get(nearlyCells[i]).isChecked
+                || Controller.getLogic().getCells().get(nearlyCells[i]).isFlag())
+            i = random.nextInt(7);
 
+        numberCheck = nearlyCells[i];
+
+
+        System.out.println("рандом вокруг клетки "+numberCheck);
         return Controller.getLogic().getCells().get(numberCheck).checkBot();
 
     }
 
 
-
     //Проверка колличества флагов
+
     private void checkFlag() {
         int c = 0;
         for (Cell bomb : Controller.getLogic().getBombs())
