@@ -111,12 +111,22 @@ class Logic {
                     cells.get(i * levelWidth + j).setConditon(0);
 
             }
+        for (Cell cell : cells) {
+            cell.setFlag(false);
+            cell.setChecked(false);
+        }
+        for (Cell bomb : bombs)
+            bomb.setConditions(cells);
 
     }
 
     //Перезагрузка последнего уровня
     void reloadLast() {
         System.out.println("Перезагрузка последнего уровня");
+        for (Cell cell : cells) {
+            cell.setFlag(false);
+            cell.setChecked(false);
+        }
     }
 
     //Установка панели победы(при успешном прохождении игры)

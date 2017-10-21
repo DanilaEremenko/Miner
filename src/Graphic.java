@@ -37,26 +37,15 @@ public class Graphic {
 
     //Перезагрузка уровня
     void reload() {
-        System.out.println("Перезагрука уровня");
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
         root.setVisible(true);
         for (Cell cell : logic.getCells()) {
-            cell.setFlag(false);
             cell.setStyle(" -fx-base: #FAFAFA;");
             cell.getMyContent().setVisible(false);
             cell.setVisible(true);
-            cell.setChecked(false);
-        }
-
-
-        for (Cell bomb : logic.getBombs())
-            bomb.setConditions(logic.getCells());
-
-
-        for (Cell cell : logic.getCells())
             cell.setText();
-
+        }
 
     }
 
@@ -67,11 +56,9 @@ public class Graphic {
         rootWin.setVisible(false);
         root.setVisible(true);
         for (Cell cell : logic.getCells()) {
-            cell.setFlag(false);
             cell.setStyle(" -fx-base: #FAFAFA;");
             cell.getMyContent().setVisible(false);
             cell.setVisible(true);
-            cell.setChecked(false);
         }
 
 
@@ -92,7 +79,7 @@ public class Graphic {
     //Показывает изначальные условия(для кнопки ESC)
     void checkAll() {
         for (Cell cell : logic.getCells()) {
-            if (cell.getConditon() == 9&&!cell.isFlag())
+            if (cell.getConditon() == 9 && !cell.isFlag())
                 cell.setStyle(" -fx-base: #1111DD");
             else if (!cell.isFlag()) {
                 cell.setVisible(false);
