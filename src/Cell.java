@@ -108,7 +108,7 @@ class Cell extends Button {
         numberCheck = nearlyCells[i];
 
 
-        System.out.println("рандом вокруг клетки "+numberCheck);
+        System.out.println("рандом вокруг клетки " + numberCheck);
         return Controller.getLogic().getCells().get(numberCheck).checkBot();
 
     }
@@ -118,7 +118,6 @@ class Cell extends Button {
         this.flag = flag;
         setStyle(" -fx-base: #CC3333");
     }
-
 
 
     //Проверка клетки,не для бота
@@ -195,8 +194,12 @@ class Cell extends Button {
         myContent.setText("" + conditon);
     }
 
+    //возвращает -1, если клетка не вскрыта
     int getConditon() {
-        return conditon;
+        if (isChecked)
+            return conditon;
+        else
+            return -1;
     }
 
     int[] getNearlyCells() {
