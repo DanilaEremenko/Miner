@@ -3,6 +3,8 @@ import java.util.Random;
 
 class Bot {
     private Random random;
+    private int lose = 0;//Для ведения подсчета побед
+    private int win = 0;//Для ведения подсчет поражений
     private boolean gameOver = false;//при вызове бота на уже решенном полеЛ
     private Logic logic;
     private ArrayList<Cell> botCells;//Клетки раскрыте ботом
@@ -15,8 +17,8 @@ class Bot {
 
     Bot(Logic logic) {
         currentProbabilities = new Probabilities(1, 1);
-        bestProbabilitys = new Probabilities(1, 1);
-        randomProbabilities = new Probabilities(1, 1);
+        bestProbabilitys = new Probabilities(10, 1);
+        randomProbabilities = new Probabilities(10, 1);
         cellThatBotKnow = new boolean[logic.getLevelHight() * logic.getLevelWidth()];
         for (int i = 0; i < cellThatBotKnow.length; i++)
             cellThatBotKnow[i] = false;
@@ -25,7 +27,7 @@ class Bot {
         botCells = new ArrayList<>();
         random = new Random();
         //для теста
-        botCells.add(logic.getCells().get(12).checkBot());
+        //botCells.add(logic.getCells().get(12).checkBot());
     }
 
     //Перезагрузка бота
@@ -34,34 +36,33 @@ class Bot {
             cellThatBotKnow[i] = false;
 
         currentProbabilities.set(1, 1);
-        bestProbabilitys.set(1, 1);
-        randomProbabilities.set(1, 1);
+        bestProbabilitys.set(10, 1);
+        randomProbabilities.set(10, 1);
         botCells.clear();
         flag = 0;
         gameOver = false;
         //Для теста
-        botCells.add(logic.getCells().get(12).checkBot());
+        //botCells.add(logic.getCells().get(12).checkBot());
     }
 
     //Вызов бота
     void helpMeBot() {
-
         if (gameOver) {
-            System.out.println("Игра уже закончена");
+            System.out.println(win + " побед\n" + lose + " поражений");
             return;
         }
+
+        if (flag == logic.getMinesDigit() && logic.getCells().size() - botCells.size() == logic.getMinesDigit()) {
+            gameOver = true;
+            win++;
+        }
+
         //Ведем подсчет вомзожнных ходов наверняка
         //Если таковых нет рандомим
         //В if если значение элемента []cells равно колличеству мин в известных соседних клетках-вскрываем неизвестные
-        if (logic.getMinesDigit() == flag && botCells.size() + logic.getBombs().size() == logic.getCells().size()) {
-            gameOver = true;
-        }
         boolean currentStep = easyStep();
         if (!currentStep)
             doRandom();
-
-        if (flag == logic.getMinesDigit()||logic.getCells().size()-botCells.size()==logic.getMinesDigit())
-            gameOver = true;
         numberOfBestProbabilities = -1;
         bestProbabilitys.set(1, 1);
 
@@ -103,6 +104,7 @@ class Bot {
                         addedCells.add(logic.getCells().get(number).checkBot());
                         cellThatBotKnow[number] = true;
                         if (addedCells.get(addedCells.size() - 1).getConditon() == 9) {
+                            lose++;
                             gameOver = true;
                             System.out.println("Хозяин, я глупый бот, перепиши меня");
                         }
@@ -128,16 +130,25 @@ class Bot {
         return doSomething;
     }
 
-
     //Рандомный ход
     private void doRandom() {
-        //Выход из игры если нашли все мины
-        if (flag == logic.getMinesDigit()) {
+        //Выход из игры если нашли все мины,кажется тут была вероятность попадания в бесконечный цикл
+        if (flag == logic.getMinesDigit() && logic.getCells().size() - botCells.size() == logic.getMinesDigit()) {
+            win++;
             gameOver = true;
             return;
         }
-        //Выбираем лучший рандом из пары "Рандом вокруг клетки" и "Рандома по полю всех неизвестных"
         randomProbabilities.set(logic.getMinesDigit() - flag, logic.getLevelHight() * logic.getLevelWidth() - botCells.size() - flag);
+
+        //Костыль
+        if (randomProbabilities.getNumerator() == 0 || randomProbabilities.getDenominator() <= 0 ||
+                bestProbabilitys.getDenominator() == bestProbabilitys.getNumerator()) {
+            win++;
+            gameOver = true;
+            return;
+        }
+
+        //Выбираем лучший рандом из пары "Рандом вокруг клетки" и "Рандома по полю всех неизвестных"
         //Если выгоднее рандомить вокруг какой-то клетки
         if (bestProbabilitys.compare(randomProbabilities) == -1) {
             if (numberOfBestProbabilities != -1)
@@ -158,13 +169,29 @@ class Bot {
 
         //Если вскрыли бомбу проигрываем
         if (botCells.get(botCells.size() - 1).getConditon() == 9) {
+            lose++;
             gameOver = true;
             System.out.println("Хозяин, я проиграл после рандомного хода.Дай мне шанс исправиться");
         }
 
     }
 
-    //для хранения вероятностей
+
+    //Геттеры
+    int getWin() {
+        return win;
+    }
+
+    int getLose() {
+        return lose;
+    }
+
+    boolean isGameOver() {
+        return gameOver;
+    }
+    //Геттеры
+
+    //для хранения вероятностей в дробях
     class Probabilities {
         private int numerator;
         private int denominator;
@@ -196,14 +223,6 @@ class Bot {
             this.denominator = denominator;
         }
 
-        void setNumerator(int numerator) {
-            this.numerator = numerator;
-        }
-
-        void setDenominator(int denominator) {
-            this.denominator = denominator;
-        }
-
         int getDenominator() {
             return denominator;
         }
@@ -214,6 +233,7 @@ class Bot {
 
 
     }
+
 }
 
 
