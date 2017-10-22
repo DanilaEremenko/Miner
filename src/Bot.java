@@ -3,8 +3,8 @@ import java.util.Random;
 
 class Bot {
     private Random random;
-    private int lose = 0;//Для ведения подсчета побед
-    private int win = 0;//Для ведения подсчет поражений
+    private int lose = 0;//Для ведения подсчета поражений
+    private int win = 0;//Для ведения подсчет побед
     private boolean gameOver = false;//при вызове бота на уже решенном полеЛ
     private Logic logic;
     private ArrayList<Cell> botCells;//Клетки раскрыте ботом
