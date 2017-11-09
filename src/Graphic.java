@@ -31,7 +31,7 @@ public class Graphic {
 
 
         for (Cell cell : logic.getCells())
-            root.getChildren().addAll(cell, cell.getMyContent());
+            root.getChildren().addAll(cell, cell.getMyContent(),cell.getProbabilitiys());
 
     }
 

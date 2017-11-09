@@ -1,4 +1,5 @@
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
@@ -7,11 +8,12 @@ import java.util.Random;
 
 
 class Cell extends Button {
-    private int conditon;//9-бомба
-    private Content myContent;
-    private boolean isChecked = false;
-    final private int numberInArray;
-    private boolean flag = false;//true есть флаг, false нет флага
+    private int conditon;//Колличество мин вокруг клетки, 9 обозначается мина
+    private Label probabilitiys;//Визуализация вероятности мины на клетке
+    private Content myContent;//Визуализация condition
+    private boolean isChecked = false;//Проверена ли клетка
+    final private int numberInArray;//Номер клетки в массиве cells
+    private boolean flag = false;//true-есть флаг, false-нет флага
     private int[] nearlyCells;//Номера клеток, находящихся рядом
 
 
@@ -22,6 +24,10 @@ class Cell extends Button {
         setPrefSize(50, 50);
         setTranslateX(x * 50);
         setTranslateY(y * 50);
+
+        probabilitiys = new Label();
+        probabilitiys.setTranslateX(x * 50);
+        probabilitiys.setTranslateY(y * 50);
 
 
         if (conditon == 9)
@@ -84,6 +90,7 @@ class Cell extends Button {
     //Проверка клетки для бота
     Cell checkBot() {
         setVisible(false);
+        probabilitiys.setVisible(false);
         myContent.setVisible(true);
         this.isChecked = true;
         isChecked = true;
@@ -94,22 +101,6 @@ class Cell extends Button {
 
         return this;
 
-
-    }
-
-    //Рандом по одной из клеток находящихся рядом для бота
-    Cell checkNearlyCell(Random random) {
-        int numberCheck;
-        int i = random.nextInt(7);
-        while (nearlyCells[i] == -10 || Controller.getLogic().getCells().get(nearlyCells[i]).isChecked
-                || Controller.getLogic().getCells().get(nearlyCells[i]).isFlag())
-            i = random.nextInt(7);
-
-        numberCheck = nearlyCells[i];
-
-
-        System.out.println("рандом вокруг клетки " + numberCheck);
-        return Controller.getLogic().getCells().get(numberCheck).checkBot();
 
     }
 
@@ -182,6 +173,14 @@ class Cell extends Button {
 
 
     //Сеттеры, геттеры, проверки
+
+    void setProbabilitiys(String prob) {
+        probabilitiys.setText(prob);
+        probabilitiys.setStyle("-fx-font-size:30;");
+        probabilitiys.setVisible(true);
+
+    }
+
     void setConditon(int conditon) {
         this.conditon = conditon;
     }
@@ -208,6 +207,10 @@ class Cell extends Button {
 
     Content getMyContent() {
         return myContent;
+    }
+
+    Label getProbabilitiys() {
+        return probabilitiys;
     }
 
     int getNumberInArray() {
