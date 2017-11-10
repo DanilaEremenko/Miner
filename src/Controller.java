@@ -12,9 +12,12 @@ public class Controller extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        logic = new Logic(9, 9, 10);
+        //logic = new Logic(9, 9, 10);
+        int[]numbersOfMines={0,2,3,5};
+        logic =new Logic(3,4,numbersOfMines);
         graphic = new Graphic(logic);
         myManBot = new Bot(logic);
+
 
         System.out.println("Побед "+myManBot.getWin()+"\nПоражений "+myManBot.getLose());
 
