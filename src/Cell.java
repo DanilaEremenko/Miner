@@ -123,7 +123,7 @@ class Cell extends Button {
         if (conditon == 0) {
             for (int number : nearlyCells)
                 if (number != -10)
-                    Controller.getLogic().getCells().get(number).check();
+                    Controller.getLogic().getCells()[number].check();
 
         }
 
@@ -150,10 +150,10 @@ class Cell extends Button {
     }
 
     //Установка состояния на все мины,вызывайтся на минах
-    void setConditions(ArrayList<Cell> cells) {
+    void setConditions(Cell[] cells) {
         for (int number : nearlyCells)
             if (number != -10)
-                cells.get(number).addCondition();
+                cells[number].addCondition();
 
 
     }

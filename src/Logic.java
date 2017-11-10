@@ -6,8 +6,8 @@ import java.util.Random;
 
 class Logic {
 
-    private ArrayList<Cell> cells;
-    private ArrayList<Cell> bombs;
+    private Cell[] cells;
+    private Cell[] bombs;
     private int minesDigit;//Колличество мин
     private int levelWidth;//Число клеток в ширину
     private int levelHight;//Число клеток в высоту
@@ -17,8 +17,8 @@ class Logic {
         levelWidth = weight;
         levelHight = hight;
         this.minesDigit = numbersOfMines.length;
-        cells = new ArrayList<>();
-        bombs = new ArrayList<>();
+        cells = new Cell[weight * hight];
+        bombs = new Cell[numbersOfMines.length];
         common(weight, hight, numbersOfMines);
     }
 
@@ -26,8 +26,8 @@ class Logic {
         levelWidth = weight;
         this.minesDigit = minesDigit;
         levelHight = hight;
-        cells = new ArrayList<>();
-        bombs = new ArrayList<>();
+        cells = new Cell[hight*weight];
+        bombs = new Cell[minesDigit];
         int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
         common(weight, hight, numbersOfMines);
     }
@@ -37,13 +37,15 @@ class Logic {
 
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++)
-                cells.add(new Cell(0, j + 1, i + 1, i * weight + j));
+                cells[i*weight + j] = new Cell(0, j + 1, i + 1, i * weight + j);
 
+        int bombIndex = 0;
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++) {
                 if (contains(weight * i + j, numbersOfMines)) {
-                    cells.get(i * weight + j).setConditon(9);
-                    bombs.add(cells.get(i * weight + j));//тут лучше бы переворачивать
+                    cells[i * weight + j].setConditon(9);
+                    bombs[bombIndex] = cells[i * weight + j];//тут лучше бы переворачивать
+                    bombIndex++;
                 }
             }
 
@@ -97,18 +99,22 @@ class Logic {
     //Перезагрузка уровня
     void reload() {
         System.out.println("Перезагрука уровня");
-        bombs.clear();
+        for (int i = 0; i < bombs.length; i++)
+            bombs[i] = null;
+
 
         int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
 
+        int bombIndex = 0;
         for (int i = 0; i < levelHight; i++)
             for (int j = 0; j < levelWidth; j++) {
                 if (contains(levelWidth * i + j, numbersOfMines)) {
 
-                    cells.get(i * levelWidth + j).setConditon(9);
-                    bombs.add(cells.get(i * levelWidth + j));
+                    cells[i * levelWidth + j].setConditon(9);
+                    bombs[bombIndex]=cells[i * levelWidth + j];
+                    bombIndex++;
                 } else
-                    cells.get(i * levelWidth + j).setConditon(0);
+                    cells[i * levelWidth + j].setConditon(0);
 
             }
         for (Cell cell : cells) {
@@ -146,7 +152,7 @@ class Logic {
         for (Cell bomb : bombs)
             System.out.print("" + bomb.getNumberInArray() + ",");
 
-        System.out.println("Колличество бомб " + bombs.size());
+        System.out.println("Колличество бомб " + bombs.length);
     }
 
 
@@ -163,11 +169,11 @@ class Logic {
         return levelHight;
     }
 
-    ArrayList<Cell> getCells() {
+    Cell[] getCells() {
         return cells;
     }
 
-    ArrayList<Cell> getBombs() {
+    Cell[] getBombs() {
         return bombs;
     }
 

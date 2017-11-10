@@ -47,7 +47,7 @@ class Bot {
             return;
         }
 
-        if (flag == logic.getMinesDigit() && logic.getCells().size() - botCells.size() == logic.getMinesDigit()) {
+        if (flag == logic.getMinesDigit() && logic.getCells().length - botCells.size() == logic.getMinesDigit()) {
             gameOver = true;
             win++;
         }
@@ -73,9 +73,9 @@ class Bot {
 
             //Считаем неизвестные клетки и найденные бомбы вокруг клетки
             for (int number : cell.getNearlyCells()) {
-                if (number != -10 && !logic.getCells().get(number).isChecked())
+                if (number != -10 && !logic.getCells()[number].isChecked())
                     unknownCells += 1;
-                if (number != -10 && logic.getCells().get(number).isFlag())
+                if (number != -10 && logic.getCells()[number].isFlag())
                     flagCells += 1;
 
             }
@@ -83,8 +83,8 @@ class Bot {
             //Ставим флаги, если понимаем, что там мины
             if (unknownCells == cell.getConditon()) {
                 for (int number : cell.getNearlyCells()) {
-                    if (number != -10 && !logic.getCells().get(number).isChecked() && !logic.getCells().get(number).isFlag()) {
-                        logic.getCells().get(number).setFlag(true);
+                    if (number != -10 && !logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag()) {
+                        logic.getCells()[number].setFlag(true);
                         cellThatBotKnow[number] = true;
                         flag++;
                         doSomething = true;
@@ -94,8 +94,8 @@ class Bot {
             //Когда все мины вокруг клетки помечены флагами, вскрываем неизвестные клетки
             if (cell.getConditon() == flagCells) {
                 for (int number : cell.getNearlyCells())
-                    if (number != -10 && !logic.getCells().get(number).isChecked() && !logic.getCells().get(number).isFlag()) {
-                        addedCells.add(logic.getCells().get(number).checkBot());
+                    if (number != -10 && !logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag()) {
+                        addedCells.add(logic.getCells()[number].checkBot());
                         cellThatBotKnow[number] = true;
                         if (addedCells.get(addedCells.size() - 1).getConditon() == 9) {
                             lose++;
@@ -123,7 +123,7 @@ class Bot {
     //Рандомный ход
     private void doRandom() {
         //Выход из игры если нашли все мины,кажется тут была вероятность попадания в бесконечный цикл
-        if (flag == logic.getMinesDigit() && logic.getCells().size() - botCells.size() == logic.getMinesDigit()) {
+        if (flag == logic.getMinesDigit() && logic.getCells().length - botCells.size() == logic.getMinesDigit()) {
             win++;
             gameOver = true;
             return;
@@ -132,7 +132,7 @@ class Bot {
         //Метод, который необходимо реализовать
         countProbabilities(logic.getCells());
         //Следующая строчка временная замена
-        botCells.add(logic.getCells().get(random.nextInt(logic.getLevelHight()*logic.getLevelWidth())).checkBot());
+        botCells.add(logic.getCells()[random.nextInt(logic.getLevelHight()*logic.getLevelWidth())].checkBot());
 
 
         //Если вскрыли бомбу проигрываем
@@ -146,7 +146,7 @@ class Bot {
 
 
     //Метод, который будет считать вероятности нахождения мины в каждой клетке
-    private void countProbabilities(ArrayList<Cell> cells) {
+    private void countProbabilities(Cell[] cells) {
         //1-Цикл, который идет по всему полю и делит клетки на группы
 
         //2Цикл, который идет по группам и считает вероятности
