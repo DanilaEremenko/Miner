@@ -9,15 +9,17 @@ import java.util.Random;
 
 class Cell extends Button {
     private int conditon;//Колличество мин вокруг клетки, 9 обозначается мина
-    private Label probabilitiys;//Визуализация вероятности мины на клетке
     private Content myContent;//Визуализация condition
     private boolean isChecked = false;//Проверена ли клетка
     final private int numberInArray;//Номер клетки в массиве cells
     private boolean flag = false;//true-есть флаг, false-нет флага
     private int[] nearlyCells;//Номера клеток, находящихся рядом
-
+    Probabilities probabilities;//принимает разные значения в зависимости от isChecked
+    //Если isChecked-то вероятность группы, если !isChecked-то вероятность рандома
+    private Label labelProbabilitiys;//Визуализация вероятности мины на клетке
 
     Cell(int conditon, int x, int y, int numberInArray) {
+        probabilities=new Probabilities();
         this.numberInArray = numberInArray;
         this.conditon = conditon;
         setStyle(" -fx-base: #FAFAFA;");//
@@ -25,9 +27,9 @@ class Cell extends Button {
         setTranslateX(x * 50);
         setTranslateY(y * 50);
 
-        probabilitiys = new Label();
-        probabilitiys.setTranslateX(x * 50);
-        probabilitiys.setTranslateY(y * 50);
+        labelProbabilitiys = new Label();
+        labelProbabilitiys.setTranslateX(x * 50);
+        labelProbabilitiys.setTranslateY(y * 50);
 
 
         if (conditon == 9)
@@ -90,7 +92,7 @@ class Cell extends Button {
     //Проверка клетки для бота
     Cell checkBot() {
         setVisible(false);
-        probabilitiys.setVisible(false);
+        labelProbabilitiys.setVisible(false);
         myContent.setVisible(true);
         this.isChecked = true;
         isChecked = true;
@@ -175,9 +177,9 @@ class Cell extends Button {
     //Сеттеры, геттеры, проверки
 
     void setProbabilitiys(String prob) {
-        probabilitiys.setText(prob);
-        probabilitiys.setStyle("-fx-font-size:30;");
-        probabilitiys.setVisible(true);
+        labelProbabilitiys.setText(prob);
+        labelProbabilitiys.setStyle("-fx-font-size:30;");
+        labelProbabilitiys.setVisible(true);
 
     }
 
@@ -210,7 +212,7 @@ class Cell extends Button {
     }
 
     Label getProbabilitiys() {
-        return probabilitiys;
+        return labelProbabilitiys;
     }
 
     int getNumberInArray() {
