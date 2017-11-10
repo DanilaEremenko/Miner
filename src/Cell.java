@@ -3,8 +3,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.Random;
 
 
 class Cell extends Button {
@@ -14,19 +12,17 @@ class Cell extends Button {
     final private int numberInArray;//Номер клетки в массиве cells
     private boolean flag = false;//true-есть флаг, false-нет флага
     private int[] nearlyCells;//Номера клеток, находящихся рядом
-    Probabilities probabilities;//принимает разные значения в зависимости от isChecked
+    double probabilities;//принимает разные значения в зависимости от isChecked
     //Если isChecked-то вероятность группы, если !isChecked-то вероятность рандома
     private Label labelProbabilitiys;//Визуализация вероятности мины на клетке
 
     Cell(int conditon, int x, int y, int numberInArray) {
-        probabilities=new Probabilities();
         this.numberInArray = numberInArray;
         this.conditon = conditon;
         setStyle(" -fx-base: #FAFAFA;");//
         setPrefSize(50, 50);
         setTranslateX(x * 50);
         setTranslateY(y * 50);
-
         labelProbabilitiys = new Label();
         labelProbabilitiys.setTranslateX(x * 50);
         labelProbabilitiys.setTranslateY(y * 50);

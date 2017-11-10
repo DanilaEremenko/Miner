@@ -126,12 +126,9 @@ class Bot {
             return;
         }
 
-        //Метод, который необходимо реализовать
-        countProbabilities(logic.getCells());
-
 
         //Следующая строчка временная замена
-        botCells.add(logic.getCells()[random.nextInt(logic.getLevelHight() * logic.getLevelWidth())].checkBot());
+        botCells.add(logic.getCells()[calculateProbabilities(logic.getCells())].checkBot());
 
 
         //Если вскрыли бомбу проигрываем
@@ -145,7 +142,7 @@ class Bot {
 
 
     //Метод, который будет считать вероятности нахождения мины в каждой клетке
-    private void countProbabilities(Cell[] cells) {
+    private int calculateProbabilities(Cell[] cells) {
 
         //1-Цикл, который идет по всему полю и делит клетки на группы
         //Считаем вероятность вокруг каждоый известной клетки
@@ -159,37 +156,82 @@ class Bot {
 
 
             }
-            cell.probabilities.set(cell.getConditon(), denominator);
+            cell.probabilities = cell.getConditon();
+            cell.probabilities = cell.probabilities / denominator;
         }
 
-        //На данном этапе
-        //Если клетка известна-берем в формулу
+
         for (Cell cell : logic.getCells()) {
             if (!cell.isChecked() && !cell.isFlag()) {
                 for (int numberOfCell : cell.getNearlyCells())
                     if (numberOfCell != -10)
                         if (logic.getCells()[numberOfCell].isChecked()) {
                             //КОСТЫЛЬ
-                            if (cell.probabilities.getNumerator() == 0 && cell.probabilities.getDenominator() == 0)
-                                cell.probabilities.set(1, 1);
-                            cell.probabilities = cell.probabilities.multiply
-                                    (new Probabilities(1, 1).substring
-                                            (logic.getCells()[numberOfCell].probabilities));
+                            if (cell.probabilities == 0)
+                                cell.probabilities = 1;
+                            cell.probabilities = cell.probabilities * (1 - logic.getCells()[numberOfCell].probabilities);
                         }
 
-                cell.probabilities = new Probabilities(1, 1).substring(cell.probabilities);
-                cell.setProbabilitiys(cell.probabilities.toString());
+                cell.probabilities = 1 - (cell.probabilities);
+
+            }
+        }
+
+        boolean go = true;
+        while (go) {
+            for (Cell cell : botCells) {
+                double balancingMultiplier = 0;
+                for (int number : cell.getNearlyCells()) {
+                    if (number != -10)
+                        if (!logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag())
+                            balancingMultiplier += logic.getCells()[number].probabilities;
+
+                }
+                balancingMultiplier = cell.getConditon() / balancingMultiplier;
+                for (int number : cell.getNearlyCells()) {
+                    if (number != -10)
+                        if (!logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag())
+                            logic.getCells()[number].probabilities *= balancingMultiplier;
+
+                }
             }
 
+            go = false;
+            for (Cell cell : botCells) {
+                double sum = 0;
+                for (int number : cell.getNearlyCells()) {
+                    if (number != -10)
+                        if (!logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag())
+                            sum += logic.getCells()[number].probabilities;
+
+                }
+
+                if (Math.abs(sum - cell.getConditon()) > 0.2)
+                    go = true;
+            }
 
         }
 
-        //2Цикл, который идет по группам и считает вероятности
+        double minimum = logic.getCells()[0].probabilities;
+        int indexOfCheck = 0;
+        for (Cell cell : logic.getCells())
+            if (!cell.isChecked() && !cell.isFlag())
+                if (cell.probabilities < minimum) {
+                    minimum = cell.probabilities;
+                    indexOfCheck = cell.getNumberInArray();
+                }
 
+
+        for (Cell cell : logic.getCells())
+            if (!cell.isFlag() && !cell.isChecked())
+                cell.setProbabilitiys(String.format("%.2g%n", cell.probabilities));
+
+        return indexOfCheck;
     }
 
 
     //Геттеры
+
     int getWin() {
         return win;
     }
