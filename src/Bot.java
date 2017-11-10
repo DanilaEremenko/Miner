@@ -10,12 +10,8 @@ class Bot {
     private ArrayList<Cell> botCells;//Клетки раскрыте ботом
     private int flag;//Колличество найденных мин
     private boolean[] cellThatBotKnow;//true-значит клетка вскрыта, либо помечена флагом
-    private Probabilities [] allProbabilities;//Все вероятности, которые будут считаться в countProbabilities
 
     Bot(Logic logic) {
-
-
-        allProbabilities=new Probabilities[logic.getLevelWidth()*logic.getLevelWidth()];
         cellThatBotKnow = new boolean[logic.getLevelHight() * logic.getLevelWidth()];
         for (int i = 0; i < cellThatBotKnow.length; i++)
             cellThatBotKnow[i] = false;
@@ -25,6 +21,8 @@ class Bot {
         random = new Random();
         //для теста
         //botCells.add(logic.getCells().get(12).checkBot());
+        botCells.add(logic.getCells()[4].checkBot());
+        botCells.add(logic.getCells()[7].checkBot());
     }
 
     //Перезагрузка бота
@@ -51,7 +49,6 @@ class Bot {
             gameOver = true;
             win++;
         }
-
 
 
         //Делай ход наверняка
@@ -131,8 +128,10 @@ class Bot {
 
         //Метод, который необходимо реализовать
         countProbabilities(logic.getCells());
+
+
         //Следующая строчка временная замена
-        botCells.add(logic.getCells()[random.nextInt(logic.getLevelHight()*logic.getLevelWidth())].checkBot());
+        botCells.add(logic.getCells()[random.nextInt(logic.getLevelHight() * logic.getLevelWidth())].checkBot());
 
 
         //Если вскрыли бомбу проигрываем
@@ -147,11 +146,48 @@ class Bot {
 
     //Метод, который будет считать вероятности нахождения мины в каждой клетке
     private void countProbabilities(Cell[] cells) {
+
         //1-Цикл, который идет по всему полю и делит клетки на группы
+        //Считаем вероятность вокруг каждоый известной клетки
+        for (Cell cell : botCells) {
+            int denominator = 0;
+            for (int numberCellAround : cell.getNearlyCells()) {
+
+                if (!logic.getCells()[numberCellAround].isChecked() &&
+                        !logic.getCells()[numberCellAround].isFlag())
+                    denominator++;
+
+
+            }
+            cell.probabilities.set(cell.getConditon(), denominator);
+        }
+
+        //На данном этапе
+        //Если клетка известна-берем в формулу
+        for (Cell cell : logic.getCells()) {
+            if (!cell.isChecked() && !cell.isFlag()) {
+                for (int numberOfCell : cell.getNearlyCells())
+                    if (numberOfCell != -10)
+                        if (logic.getCells()[numberOfCell].isChecked()) {
+                            //КОСТЫЛЬ
+                            if (cell.probabilities.getNumerator() == 0 && cell.probabilities.getDenominator() == 0)
+                                cell.probabilities.set(1, 1);
+                            cell.probabilities = cell.probabilities.multiply
+                                    (new Probabilities(1, 1).substring
+                                            (logic.getCells()[numberOfCell].probabilities));
+                        }
+
+                cell.probabilities = new Probabilities(1, 1).substring(cell.probabilities);
+                cell.setProbabilitiys(cell.probabilities.toString());
+            }
+
+
+        }
 
         //2Цикл, который идет по группам и считает вероятности
 
     }
+
 
     //Геттеры
     int getWin() {
@@ -166,49 +202,6 @@ class Bot {
         return gameOver;
     }
     //Геттеры
-
-    //для хранения вероятностей в дробях
-    class Probabilities {
-        private int numerator;
-        private int denominator;
-
-        Probabilities(int numerator, int denominator) {
-            this.numerator = numerator;
-            this.denominator = denominator;
-        }
-
-        Probabilities() {
-        }
-
-
-        int compare(Probabilities probabilities2) {
-            if (this.getDenominator() == 0 || probabilities2.getDenominator() == 0)
-                return 0;
-            int chisl1 = this.getNumerator() * probabilities2.getDenominator();
-            int chisl2 = probabilities2.getNumerator() * this.getDenominator();
-            return Integer.compare(chisl1, chisl2);
-        }
-
-        @Override
-        public String toString() {
-            return numerator + "/" + denominator;
-        }
-
-        void set(int numerator, int denominator) {
-            this.numerator = numerator;
-            this.denominator = denominator;
-        }
-
-        int getDenominator() {
-            return denominator;
-        }
-
-        int getNumerator() {
-            return numerator;
-        }
-
-
-    }
 
 }
 
