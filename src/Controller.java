@@ -2,8 +2,6 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 
-//Кусок с кучей if давно пора закинуть в общий метод(используется в Bot и Cell для получения индексов соседних клеток
-
 public class Controller extends Application {
     static private Graphic graphic;
     static private Logic logic;
