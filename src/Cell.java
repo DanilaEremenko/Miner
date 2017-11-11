@@ -141,7 +141,7 @@ class Cell extends Button {
 
     }
 
-    //Добавление к состоянию единицы,используется в setConditions
+    //Добавление к состоянию единицы,используется в printProabilities
     private void addCondition() {
         if (conditon != 9)
             conditon++;
@@ -172,9 +172,9 @@ class Cell extends Button {
 
     //Сеттеры, геттеры, проверки
 
-    void setProbabilitiys(String prob) {
-        labelProbabilitiys.setText(prob);
-        labelProbabilitiys.setStyle("-fx-font-size:30;");
+    void setLabelProbabilitiys(String prob) {
+        labelProbabilitiys.setText(String.format("%.2f",probabilities));
+        labelProbabilitiys.setStyle("-fx-font-size:20;");
         labelProbabilitiys.setVisible(true);
 
     }
@@ -213,6 +213,10 @@ class Cell extends Button {
 
     int getNumberInArray() {
         return numberInArray;
+    }
+
+    public Label getLabelProbabilitiys() {
+        return labelProbabilitiys;
     }
 
     boolean isFlag() {
