@@ -35,7 +35,7 @@ public class Graphic {
 
     }
 
-    void setConditions() {
+    void printProabilities() {
         for (Cell cell : logic.getCells())
             if (!cell.isFlag() && !cell.isChecked())
                 cell.setLabelProbabilitiys(String.format("%.2g%n", cell.probabilities));

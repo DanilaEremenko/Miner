@@ -10,14 +10,12 @@ public class Controller extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //logic = new Logic(9, 9, 10);
-        int[]numbersOfMines={0,2,3,5};
-        logic =new Logic(3,4,numbersOfMines);
+        logic = new Logic(9, 9, 20);
         graphic = new Graphic(logic);
         myManBot = new Bot(logic);
 
 
-        System.out.println("Побед "+myManBot.getWin()+"\nПоражений "+myManBot.getLose());
+        System.out.println("Побед " + myManBot.getWin() + "\nПоражений " + myManBot.getLose());
 
 
         //Ниже значение кнопок
@@ -26,6 +24,7 @@ public class Controller extends Application {
 
                 case B:
                     myManBot.helpMeBot();
+                    graphic.printProabilities();
                     break;
 
                 case ESCAPE:
