@@ -31,7 +31,14 @@ public class Graphic {
 
 
         for (Cell cell : logic.getCells())
-            root.getChildren().addAll(cell, cell.getMyContent(),cell.getProbabilitiys());
+            root.getChildren().addAll(cell, cell.getMyContent(), cell.getProbabilitiys());
+
+    }
+
+    void setConditions() {
+        for (Cell cell : logic.getCells())
+            if (!cell.isFlag() && !cell.isChecked())
+                cell.setLabelProbabilitiys(String.format("%.2g%n", cell.probabilities));
 
     }
 
@@ -46,6 +53,8 @@ public class Graphic {
             cell.setVisible(true);
             cell.setText();
         }
+        for (Cell cell : logic.getCells())
+            cell.getLabelProbabilitiys().setVisible(false);
 
     }
 
@@ -60,6 +69,8 @@ public class Graphic {
             cell.getMyContent().setVisible(false);
             cell.setVisible(true);
         }
+        for (Cell cell : logic.getCells())
+            cell.getLabelProbabilitiys().setVisible(false);
 
 
     }
@@ -85,6 +96,7 @@ public class Graphic {
                 cell.setVisible(false);
                 cell.getMyContent().setVisible(true);
             }
+            cell.getLabelProbabilitiys().setVisible(false);
         }
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
