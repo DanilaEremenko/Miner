@@ -1,46 +1,20 @@
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-
-
-
-class Cell extends Button {
+class LogicCell {
+    private int x;//Координата X, для графики
+    private int y;//Коориданат Y, для графиик
     private int conditon;//Колличество мин вокруг клетки, 9 обозначается мина
-    private Content myContent;//Визуализация condition
     private boolean isChecked = false;//Проверена ли клетка
     final private int numberInArray;//Номер клетки в массиве cells
     private boolean flag = false;//true-есть флаг, false-нет флага
     private int[] nearlyCells;//Номера клеток, находящихся рядом
     double probabilities;//принимает разные значения в зависимости от isChecked
     //Если isChecked-то вероятность группы, если !isChecked-то вероятность рандома
-    private Label labelProbabilitiys;//Визуализация вероятности мины на клетке
 
-    Cell(int conditon, int x, int y, int numberInArray) {
+
+    LogicCell(int conditon, int x, int y, int numberInArray) {
+        this.x = x;
+        this.y = y;
         this.numberInArray = numberInArray;
         this.conditon = conditon;
-        setStyle(" -fx-base: #FAFAFA;");//
-        setPrefSize(50, 50);
-        setTranslateX(x * 50);
-        setTranslateY(y * 50);
-        labelProbabilitiys = new Label();
-        labelProbabilitiys.setTranslateX(x * 50);
-        labelProbabilitiys.setTranslateY(y * 50);
-
-
-        if (conditon == 9)
-            myContent = new Content(this, Color.RED);
-        else
-            myContent = new Content(this, 0);
-
-        setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.SPACE)
-                        dropFlag();
-                    if (event.getCode() == KeyCode.ENTER)
-                        check();
-
-                }
-        );
 
     }
 
@@ -85,27 +59,20 @@ class Cell extends Button {
 
     }
 
-    //Проверка клетки для бота
-    Cell checkBot() {
-        setVisible(false);
-        labelProbabilitiys.setVisible(false);
-        myContent.setVisible(true);
+    //Проверка клетки для бота, сделать для логической клетки
+    LogicCell checkBot() {
         this.isChecked = true;
         isChecked = true;
         if (conditon == 9)
-            setStyle(" -fx-base: #1111DD");
-        //Controller.getLogic().gameOver();
-        checkFlag();
+            //Вывести проигрыш
+            ;
 
         return this;
-
-
     }
 
     //Установка флага(для бота)
     void setFlag(boolean flag) {
         this.flag = flag;
-        setStyle(" -fx-base: #CC3333");
     }
 
 
@@ -114,14 +81,12 @@ class Cell extends Button {
         if (isChecked)
             return;
         isChecked = true;
-        setVisible(false);
-        myContent.setVisible(true);
         if (conditon == 9)
             Controller.getLogic().gameOver();
         if (conditon == 0) {
             for (int number : nearlyCells)
                 if (number != -10)
-                    Controller.getLogic().getCells()[number].check();
+                    Controller.getLogic().getLogicCells()[number].check();
 
         }
 
@@ -132,7 +97,7 @@ class Cell extends Button {
     //Проверка колличества флагов
     private void checkFlag() {
         int c = 0;
-        for (Cell bomb : Controller.getLogic().getBombs())
+        for (LogicCell bomb : Controller.getLogic().getBombs())
             if (bomb.flag)
                 c++;
         if (c == Controller.getLogic().getMinesDigit())
@@ -148,10 +113,10 @@ class Cell extends Button {
     }
 
     //Установка состояния на все мины,вызывайтся на минах
-    void setConditions(Cell[] cells) {
+    void setConditions(LogicCell[] logicCells) {
         for (int number : nearlyCells)
             if (number != -10)
-                cells[number].addCondition();
+                logicCells[number].addCondition();
 
 
     }
@@ -160,10 +125,8 @@ class Cell extends Button {
     private void dropFlag() {
         if (!flag) {
             flag = true;
-            setStyle(" -fx-base: #CC3333");
         } else {
             flag = false;
-            setStyle(" -fx-base: #FAFAFA;");//
         }
         checkFlag();
 
@@ -172,12 +135,6 @@ class Cell extends Button {
 
     //Сеттеры, геттеры, проверки
 
-    void setLabelProbabilitiys(String prob) {
-        labelProbabilitiys.setText(String.format("%.2f",probabilities));
-        labelProbabilitiys.setStyle("-fx-font-size:20;");
-        labelProbabilitiys.setVisible(true);
-
-    }
 
     void setConditon(int conditon) {
         this.conditon = conditon;
@@ -187,45 +144,40 @@ class Cell extends Button {
         isChecked = checked;
     }
 
-    void setText() {
-        myContent.setText("" + conditon);
-    }
-
     //возвращает -1, если клетка не вскрыта
     int getConditon() {
-        if (isChecked)
-            return conditon;
-        else
-            return -1;
+
+        return conditon;
     }
 
     int[] getNearlyCells() {
         return nearlyCells;
     }
 
-    Content getMyContent() {
-        return myContent;
-    }
-
-    Label getProbabilitiys() {
-        return labelProbabilitiys;
-    }
-
     int getNumberInArray() {
         return numberInArray;
-    }
-
-    public Label getLabelProbabilitiys() {
-        return labelProbabilitiys;
     }
 
     boolean isFlag() {
         return flag;
     }
 
+    int getX() {
+        return x;
+    }
+
+    int getY() {
+        return y;
+    }
+
+    public double getProbabilities() {
+        return probabilities;
+    }
+
     //Открыли ли клетку(для автоматического открывания клеток вокруг нуля, боту не понадобится)
     boolean isChecked() {
         return isChecked;
     }
+
 
 }

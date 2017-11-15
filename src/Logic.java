@@ -1,13 +1,11 @@
-import java.util.ArrayList;
-
 import java.util.Random;
 //Периодически выставляется меньше мин чем надо
 
 
 class Logic {
 
-    private Cell[] cells;
-    private Cell[] bombs;
+    private LogicCell[] logicCells;
+    private LogicCell[] bombs;
     private int minesDigit;//Колличество мин
     private int levelWidth;//Число клеток в ширину
     private int levelHight;//Число клеток в высоту
@@ -17,8 +15,8 @@ class Logic {
         levelWidth = weight;
         levelHight = hight;
         this.minesDigit = numbersOfMines.length;
-        cells = new Cell[weight * hight];
-        bombs = new Cell[numbersOfMines.length];
+        logicCells = new LogicCell[weight * hight];
+        bombs = new LogicCell[numbersOfMines.length];
         common(weight, hight, numbersOfMines);
     }
 
@@ -26,8 +24,8 @@ class Logic {
         levelWidth = weight;
         this.minesDigit = minesDigit;
         levelHight = hight;
-        cells = new Cell[hight*weight];
-        bombs = new Cell[minesDigit];
+        logicCells = new LogicCell[hight*weight];
+        bombs = new LogicCell[minesDigit];
         int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
         common(weight, hight, numbersOfMines);
     }
@@ -37,25 +35,25 @@ class Logic {
 
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++)
-                cells[i*weight + j] = new Cell(0, j + 1, i + 1, i * weight + j);
+                logicCells[i*weight + j] = new LogicCell(0, j + 1, i + 1, i * weight + j);
 
         int bombIndex = 0;
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++) {
                 if (contains(weight * i + j, numbersOfMines)) {
-                    cells[i * weight + j].setConditon(9);
-                    bombs[bombIndex] = cells[i * weight + j];//тут лучше бы переворачивать
+                    logicCells[i * weight + j].setConditon(9);
+                    bombs[bombIndex] = logicCells[i * weight + j];//тут лучше бы переворачивать
                     bombIndex++;
                 }
             }
 
 
-        for (Cell cell : cells)
-            cell.setNearlyCell(levelWidth, levelHight);
+        for (LogicCell logicCell : logicCells)
+            logicCell.setNearlyCell(levelWidth, levelHight);
 
 
-        for (Cell bomb : bombs)
-            bomb.setConditions(cells);
+        for (LogicCell bomb : bombs)
+            bomb.setConditions(logicCells);
 
 
     }
@@ -110,28 +108,29 @@ class Logic {
             for (int j = 0; j < levelWidth; j++) {
                 if (contains(levelWidth * i + j, numbersOfMines)) {
 
-                    cells[i * levelWidth + j].setConditon(9);
-                    bombs[bombIndex]=cells[i * levelWidth + j];
+                    logicCells[i * levelWidth + j].setConditon(9);
+                    bombs[bombIndex]= logicCells[i * levelWidth + j];
                     bombIndex++;
                 } else
-                    cells[i * levelWidth + j].setConditon(0);
+                    logicCells[i * levelWidth + j].setConditon(0);
 
             }
-        for (Cell cell : cells) {
-            cell.setFlag(false);
-            cell.setChecked(false);
+        for (LogicCell logicCell : logicCells) {
+            logicCell.probabilities=1;
+            logicCell.setFlag(false);
+            logicCell.setChecked(false);
         }
-        for (Cell bomb : bombs)
-            bomb.setConditions(cells);
+        for (LogicCell bomb : bombs)
+            bomb.setConditions(logicCells);
 
     }
 
     //Перезагрузка последнего уровня
     void reloadLast() {
         System.out.println("Перезагрузка последнего уровня");
-        for (Cell cell : cells) {
-            cell.setFlag(false);
-            cell.setChecked(false);
+        for (LogicCell logicCell : logicCells) {
+            logicCell.setFlag(false);
+            logicCell.setChecked(false);
         }
     }
 
@@ -149,7 +148,7 @@ class Logic {
 
     //Показывает условия(для кнопки ESC)
     void checkAll() {
-        for (Cell bomb : bombs)
+        for (LogicCell bomb : bombs)
             System.out.print("" + bomb.getNumberInArray() + ",");
 
         System.out.println("Колличество бомб " + bombs.length);
@@ -169,11 +168,11 @@ class Logic {
         return levelHight;
     }
 
-    Cell[] getCells() {
-        return cells;
+    LogicCell[] getLogicCells() {
+        return logicCells;
     }
 
-    Cell[] getBombs() {
+    LogicCell[] getBombs() {
         return bombs;
     }
 

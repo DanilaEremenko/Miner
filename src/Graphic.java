@@ -2,6 +2,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
+
 public class Graphic {
 
     private Pane root;//Игровая панель
@@ -10,12 +12,17 @@ public class Graphic {
     private Pane mainRoot;//Панель на которой хранятся все остальные панели
     private Scene scene;
     private Logic logic;
+    private GraphicCell[] graphicCells;
     final private int sceneWidth = 600;//Длина сцены
     final private int sceneHight = 600;//Высота сцены
 
 
     Graphic(Logic logic) {
+        graphicCells = new GraphicCell[logic.getLevelWidth() * logic.getLevelHight()];
         this.logic = logic;
+        for (int i = 0; i < graphicCells.length; i++)
+            graphicCells[i] = new GraphicCell(logic.getLogicCells()[i]);
+
         mainRoot = new Pane();
         rootGameOver = new Pane(new Label("GAME OVER"));
         rootWin = new Pane(new Label("WIN"));
@@ -26,19 +33,19 @@ public class Graphic {
         mainRoot.getChildren().addAll(root, rootGameOver, rootWin);
         scene = new Scene(mainRoot, sceneWidth, sceneHight);
 
-        for (Cell cell : logic.getCells())
-            cell.setText();
+        for (GraphicCell graphicCell : graphicCells)
+            graphicCell.setText();
 
 
-        for (Cell cell : logic.getCells())
-            root.getChildren().addAll(cell, cell.getMyContent(), cell.getProbabilitiys());
+        for (GraphicCell graphicCell : graphicCells)
+            root.getChildren().addAll(graphicCell, graphicCell.getMyContent(), graphicCell.getLabelProbabilitiys());
 
     }
 
     void printProabilities() {
-        for (Cell cell : logic.getCells())
-            if (!cell.isFlag() && !cell.isChecked())
-                cell.setLabelProbabilitiys(String.format("%.2g%n", cell.probabilities));
+        for (GraphicCell graphicCell : graphicCells)
+            if (!graphicCell.getLogicCell().isFlag() && !graphicCell.getLogicCell().isChecked())
+                graphicCell.printLabelProbabilitiys();
 
     }
 
@@ -47,15 +54,15 @@ public class Graphic {
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
         root.setVisible(true);
-        for (Cell cell : logic.getCells()) {
-            cell.setStyle(" -fx-base: #FAFAFA;");
-            cell.getMyContent().setVisible(false);
-            cell.setVisible(true);
-            cell.setText();
+        for (GraphicCell graphicCell : graphicCells) {
+            graphicCell.setStyle(" -fx-base: #FAFAFA;");
+            graphicCell.getMyContent().setVisible(false);
+            graphicCell.setVisible(true);
+            graphicCell.setText();
         }
-        for (Cell cell : logic.getCells())
-            cell.getLabelProbabilitiys().setVisible(false);
-
+        for (GraphicCell graphicCell : graphicCells)
+            graphicCell.getLabelProbabilitiys().setVisible(false);
+        printProabilities();
     }
 
     //Перезагрузка последнего уровня
@@ -64,13 +71,13 @@ public class Graphic {
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
         root.setVisible(true);
-        for (Cell cell : logic.getCells()) {
-            cell.setStyle(" -fx-base: #FAFAFA;");
-            cell.getMyContent().setVisible(false);
-            cell.setVisible(true);
+        for (GraphicCell graphicCell : graphicCells) {
+            graphicCell.setStyle(" -fx-base: #FAFAFA;");
+            graphicCell.getMyContent().setVisible(false);
+            graphicCell.setVisible(true);
         }
-        for (Cell cell : logic.getCells())
-            cell.getLabelProbabilitiys().setVisible(false);
+        for (GraphicCell graphicCell : graphicCells)
+            graphicCell.getLabelProbabilitiys().setVisible(false);
 
 
     }
@@ -89,14 +96,14 @@ public class Graphic {
 
     //Показывает изначальные условия(для кнопки ESC)
     void checkAll() {
-        for (Cell cell : logic.getCells()) {
-            if (cell.getConditon() == 9 && !cell.isFlag())
-                cell.setStyle(" -fx-base: #1111DD");
-            else if (!cell.isFlag()) {
-                cell.setVisible(false);
-                cell.getMyContent().setVisible(true);
+        for (GraphicCell graphicCell : graphicCells) {
+            if (graphicCell.getLogicCell().getConditon() == 9 && !graphicCell.getLogicCell().isFlag())
+                graphicCell.setStyle(" -fx-base: #1111DD");
+            else if (!graphicCell.getLogicCell().isFlag()) {
+                graphicCell.setVisible(false);
+                graphicCell.getMyContent().setVisible(true);
             }
-            cell.getLabelProbabilitiys().setVisible(false);
+            graphicCell.getLabelProbabilitiys().setVisible(false);
         }
         rootGameOver.setVisible(false);
         rootWin.setVisible(false);
@@ -110,5 +117,7 @@ public class Graphic {
         return scene;
     }
 
-
+    public GraphicCell[] getGraphicCells() {
+        return graphicCells;
+    }
 }
