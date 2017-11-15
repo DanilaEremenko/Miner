@@ -8,11 +8,13 @@ public class Controller extends Application {
     static private Bot myManBot;
 
 
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        logic = new Logic(9, 9, 20);
+        logic = new Logic(9, 9, 12);
         graphic = new Graphic(logic);
         myManBot = new Bot(logic);
+        myManBot.setGraphic(graphic);
 
 
         System.out.println("Побед " + myManBot.getWin() + "\nПоражений " + myManBot.getLose());
