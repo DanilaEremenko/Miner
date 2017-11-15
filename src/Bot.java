@@ -6,12 +6,14 @@ class Bot {
     private int lose = 0;//Для ведения подсчета поражений
     private int win = 0;//Для ведения подсчет побед
     private Logic logic;
-    private ArrayList<Cell> botCells;//Клетки раскрыте ботом
+    private Graphic graphic;
+    private ArrayList<LogicCell> botCells;//Клетки раскрыте ботом
     private int flag;//Колличество найденных мин
     private boolean[] cellThatBotKnow;//true-значит клетка вскрыта, либо помечена флагом
     private boolean shouldCheck = false;//false-считаем вероятности, true-вскрываем наименьшую
     private boolean gameOver = false;//при вызове бота на уже решенном полеЛ,перенсти контроль поражений и побед в контроллер
     private int numberOfBestProbabilities;
+    private int findedMines;
 
     Bot(Logic logic) {
         cellThatBotKnow = new boolean[logic.getLevelHight() * logic.getLevelWidth()];
@@ -26,6 +28,7 @@ class Bot {
     //Перезагрузка бота
     void reload() {
 
+        findedMines = 0;
         for (int i = 0; i < cellThatBotKnow.length; i++)
             cellThatBotKnow[i] = false;
         botCells.clear();
@@ -41,7 +44,7 @@ class Bot {
             return;
         }
 
-        if (flag == logic.getMinesDigit() && logic.getCells().length - botCells.size() == logic.getMinesDigit()) {
+        if (flag == logic.getMinesDigit() && logic.getLogicCells().length - botCells.size() == logic.getMinesDigit()) {
             gameOver = true;
             win++;
         }
@@ -53,42 +56,46 @@ class Bot {
             boolean currentStep = easyStep();
             if (!currentStep)
                 if (shouldCheck) {
-                    botCells.add(logic.getCells()[numberOfBestProbabilities].checkBot());
+                    check(numberOfBestProbabilities);
                     shouldCheck = false;
                 } else {
-                    numberOfBestProbabilities = calculateProbabilities(logic.getCells());
+                    numberOfBestProbabilities = calculateProbabilities(logic.getLogicCells());
                     shouldCheck = true;
                 }
-            checkResult();
-        }
-        else
-            botCells.add(logic.getCells()[random.nextInt(80)].checkBot());
+        } else
+            check(random.nextInt(80));
+
+
+        checkResult();
 
     }
 
     //Не рандомный ход
     private boolean easyStep() {
         boolean doSomething = false;
-        ArrayList<Cell> addedCells = new ArrayList<>();
-        for (Cell cell : botCells) {
+        ArrayList<LogicCell> addedCells = new ArrayList<>();
+        for (LogicCell logicCell : botCells) {
 
             int unknownCells = 0;
             int flagCells = 0;
 
             //Считаем неизвестные клетки и найденные бомбы вокруг клетки
-            for (int number : cell.getNearlyCells()) {
-                if (number != -10 && !logic.getCells()[number].isChecked())
+            for (int number : logicCell.getNearlyCells()) {
+                if (number != -10 && !logic.getLogicCells()[number].isChecked())
                     unknownCells += 1;
-                if (number != -10 && logic.getCells()[number].isFlag())
+                if (number != -10 && logic.getLogicCells()[number].isFlag())
                     flagCells += 1;
 
             }
 
             //Ставим флаги, если понимаем, что там мины
-            if (unknownCells == cell.getConditon()) {
-                for (int number : cell.getNearlyCells()) {
-                    if (number != -10 && !logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag()) {
-                        logic.getCells()[number].setFlag(true);
+            if (unknownCells == logicCell.getConditon()) {
+                for (int number : logicCell.getNearlyCells()) {
+                    if (number != -10 && !logic.getLogicCells()[number].isChecked() && !logic.getLogicCells()[number].isFlag()) {
+                        logic.getLogicCells()[number].setFlag(true);
+                        findedMines++;
+                        if (graphic != null)
+                            graphic.getGraphicCells()[number].setFlag();
                         cellThatBotKnow[number] = true;
                         flag++;
                         doSomething = true;
@@ -96,10 +103,12 @@ class Bot {
                 }
             }
             //Когда все мины вокруг клетки помечены флагами, вскрываем неизвестные клетки
-            if (cell.getConditon() == flagCells) {
-                for (int number : cell.getNearlyCells())
-                    if (number != -10 && !logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag()) {
-                        addedCells.add(logic.getCells()[number].checkBot());
+            if (logicCell.getConditon() == flagCells) {
+                for (int number : logicCell.getNearlyCells())
+                    if (number != -10 && !logic.getLogicCells()[number].isChecked() && !logic.getLogicCells()[number].isFlag()) {
+                        addedCells.add(logic.getLogicCells()[number].checkBot());
+                        if (graphic != null)
+                            graphic.getGraphicCells()[number].checkBot();
                         cellThatBotKnow[number] = true;
                         if (addedCells.get(addedCells.size() - 1).getConditon() == 9) {
                             lose++;
@@ -126,10 +135,9 @@ class Bot {
     private void checkResult() {
 
         //Выход из игры если нашли все мины,кажется тут была вероятность попадания в бесконечный цикл
-        if (flag == logic.getMinesDigit() && logic.getCells().length - botCells.size() == logic.getMinesDigit()) {
+        if (flag == logic.getMinesDigit() && logic.getLogicCells().length - botCells.size() == logic.getMinesDigit()) {
             win++;
             gameOver = true;
-            System.out.println("ЕЕЕЕБОТ");
             return;
         }
 
@@ -137,7 +145,6 @@ class Bot {
         if (botCells.get(botCells.size() - 1).getConditon() == 9) {
             lose++;
             gameOver = true;
-            System.out.println("Хозяин, я проиграл после рандомного хода.Дай мне шанс исправиться");
         }
 
 
@@ -145,72 +152,68 @@ class Bot {
 
 
     //Метод, который будет считать вероятности нахождения мины в каждой клетке
-    private int calculateProbabilities(Cell[] cells) {
-        for (Cell cell : logic.getCells())
-            cell.probabilities = 0;
+    private int calculateProbabilities(LogicCell[] logicCells) {
+        for (LogicCell logicCell : logic.getLogicCells())
+            logicCell.probabilities = 1;
 
-        //Идем по известным клеткам
-        for (Cell cell : botCells) {
+        //Идем по известным клеткам, формируем группы
+        for (LogicCell logicCell : botCells) {
             int denominator = 0;
             int chislitel = 0;
-            for (int numberCellAround : cell.getNearlyCells()) {
+            for (int numberCellAround : logicCell.getNearlyCells()) {
                 if (numberCellAround != -10)
-                    if (!logic.getCells()[numberCellAround].isChecked() && !logic.getCells()[numberCellAround].isFlag())
+                    if (!logic.getLogicCells()[numberCellAround].isChecked() && !logic.getLogicCells()[numberCellAround].isFlag())
                         denominator++;
-                    else if (logic.getCells()[numberCellAround].isFlag())
+                    else if (logic.getLogicCells()[numberCellAround].isFlag())
                         chislitel++;
 
 
             }
-            cell.probabilities = cell.getConditon() - chislitel;
-            cell.probabilities = cell.probabilities / denominator;
+            logicCell.probabilities = logicCell.getConditon() - chislitel;
+            logicCell.probabilities = logicCell.probabilities / denominator;
         }
 
-
+        int calculatedCells = 0;
         //Идем по всем клетка и считаем вероятность для неизвестных
-        for (Cell cell : logic.getCells()) {
-            if (!cell.isChecked() && !cell.isFlag()) {
-                for (int numberOfCell : cell.getNearlyCells())//Далее смотрим в какие группы входит клетка и умножаем на вероятность от каждой группы
+        for (LogicCell logicCell : logic.getLogicCells()) {
+            if (!logicCell.isChecked() && !logicCell.isFlag()) {
+                for (int numberOfCell : logicCell.getNearlyCells())//Далее смотрим в какие группы входит клетка и умножаем на вероятность от каждой группы
                     if (numberOfCell != -10)
-                        if (logic.getCells()[numberOfCell].isChecked()) {
-                            //КОСТЫЛЬ
-                            if (cell.probabilities == 0)
-                                cell.probabilities = 1;
-                            cell.probabilities = cell.probabilities * (1 - logic.getCells()[numberOfCell].probabilities);
+                        if (logic.getLogicCells()[numberOfCell].isChecked()) {
+                            logicCell.probabilities = logicCell.probabilities * (1 - logic.getLogicCells()[numberOfCell].probabilities);
                         }
 
-                cell.probabilities = 1 - (cell.probabilities);
+                if (logicCell.probabilities != 1) {
+                    logicCell.probabilities = 1 - (logicCell.probabilities);
+                    calculatedCells++;
+                }
+
 
             }
         }
 
-        //Нормализуем значения
-//        for (Cell cell : botCells) {
-//            double balancingMultiplier = 0;
-//            for (int number : cell.getNearlyCells()) {
-//                if (number != -10)
-//                    if (!logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag())
-//                        balancingMultiplier += logic.getCells()[number].probabilities;
-//
-//            }
-//            balancingMultiplier = cell.getConditon() / balancingMultiplier;
-//            for (int number : cell.getNearlyCells()) {
-//                if (number != -10)
-//                    if (!logic.getCells()[number].isChecked() && !logic.getCells()[number].isFlag())
-//                        logic.getCells()[number].probabilities *= balancingMultiplier;
-//
-//            }
-//        }
-//
+        for (LogicCell logicCell : logic.getLogicCells()) {
+            if (logicCell.probabilities == 1) {
+                logicCell.probabilities = (double) (logic.getMinesDigit() - findedMines) /
+                        (logic.getLogicCells().length - botCells.size() - calculatedCells);
+            }
+            if (logicCell.probabilities == 0) {
+                logicCell.probabilities = 1;
+                System.out.println("Ало математика");
+            }
+
+
+        }
+
 
         //Выбираем намиеньшую из всех
         double minimum = 10;
         int indexOfCheck = 0;
-        for (Cell cell : logic.getCells())
-            if (!cell.isChecked() && !cell.isFlag())
-                if (cell.probabilities < minimum) {
-                    minimum = cell.probabilities;
-                    indexOfCheck = cell.getNumberInArray();
+        for (LogicCell logicCell : logic.getLogicCells())
+            if (!logicCell.isChecked() && !logicCell.isFlag())
+                if (logicCell.probabilities < minimum) {
+                    minimum = logicCell.probabilities;
+                    indexOfCheck = logicCell.getNumberInArray();
                 }
 
 
@@ -218,7 +221,18 @@ class Bot {
     }
 
 
-    //Геттеры
+    public void check(int index) {
+        botCells.add(logic.getLogicCells()[index].checkBot());
+        if (graphic != null)
+            graphic.getGraphicCells()[index].checkBot();
+    }
+
+    void setGraphic(Graphic graphic) {
+        this.graphic = graphic;
+    }
+
+
+//Геттеры
 
     int getWin() {
         return win;
@@ -228,9 +242,16 @@ class Bot {
         return lose;
     }
 
-    boolean isGameOver() {
-        return gameOver;
+    public int getFindedMines() {
+        return findedMines;
     }
+
+    public ArrayList<LogicCell> getBotCells() {
+        return botCells;
+    }
+
+
+
     //Геттеры
 
 }
