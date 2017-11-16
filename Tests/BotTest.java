@@ -35,8 +35,19 @@ public class BotTest {
 
     @Test
     public void helpMeBot() {
+        int massMine[] = {3, 8, 9, 11, 13, 15};
+        logic = new Logic(9, 2, massMine);
+        bot= new Bot(logic);
 
-
+        bot.check(0);
+        bot.check(1);
+        bot.check(2);
+        bot.check(4);
+        bot.check(5);
+        bot.check(6);
+        bot.check(7);
+        bot.setFlagToLogicMines(3);
+        bot.setFlagToLogicMines(8);
     }
 
     @Test
@@ -59,7 +70,7 @@ public class BotTest {
         assertEquals(true, bot.getBotCells().size() == 8);
 
         bot.helpMeBot();
-        assertEquals(4,bot.getFindedMines());
+        assertEquals(4, bot.getFindedMines());
 
     }
 

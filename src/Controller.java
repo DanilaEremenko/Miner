@@ -8,14 +8,19 @@ public class Controller extends Application {
     static private Bot myManBot;
 
 
-
-    @Override
     public void start(Stage primaryStage) throws Exception {
-        logic = new Logic(9, 9, 12);
+
+        int massMine[] = {3,5};
+        logic = new Logic(3, 2, massMine);
+        myManBot= new Bot(logic);
         graphic = new Graphic(logic);
-        myManBot = new Bot(logic);
         myManBot.setGraphic(graphic);
 
+        myManBot.check(0);
+        myManBot.check(1);
+        myManBot.check(2);
+        //myManBot.setFlagToLogicMines(3);
+        //myManBot.setFlagToLogicMines(8);
 
         System.out.println("Побед " + myManBot.getWin() + "\nПоражений " + myManBot.getLose());
 
@@ -71,4 +76,17 @@ public class Controller extends Application {
     }
 
 }
+
+
+//        for (int i = 0; i < 100000; ) {
+//            myManBot.helpMeBot();
+//            if (myManBot.isGameOver()) {
+//                logic.reload();
+//                myManBot.reload();
+//                i++;
+//            }
+//        }
+//        System.out.println("Побед" + myManBot.getWin() + "\nПоражений" + myManBot.getLose());
+//        logic.reload();
+//        myManBot.reload();
 
