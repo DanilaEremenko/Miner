@@ -41,6 +41,7 @@ public class Controller extends Application {
                     break;
 
                 case R:
+                    System.out.println("Перезагрузка уровня");
                     logic.reload();
                     graphic.reload();
                     myManBot.reload();
@@ -79,16 +80,3 @@ public class Controller extends Application {
 }
 
 
-//          logic=new Logic(9,9,10);
-//         myManBot=new Bot(logic);
-//         for (int i = 0; i < 100000; ) {
-//        myManBot.helpMeBot();
-//        if (myManBot.isGameOver()) {
-//        logic.reload();
-//        myManBot.reload();
-//        i++;
-//        }
-//        }
-//        System.out.println("Побед" + myManBot.getWin() + "\nПоражений" + myManBot.getLose());
-//        logic.reload();
-//        myManBot.reload();

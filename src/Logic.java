@@ -96,7 +96,6 @@ class Logic {
 
     //Перезагрузка уровня
     void reload() {
-        System.out.println("Перезагрука уровня");
         for (int i = 0; i < bombs.length; i++)
             bombs[i] = null;
 
