@@ -9,16 +9,12 @@ class Bot {
     private Graphic graphic;
     private ArrayList<LogicCell> botCells;//Клетки раскрыте ботом
     private int flag;//Колличество найденных мин
-    private boolean[] cellThatBotKnow;//true-значит клетка вскрыта, либо помечена флагом
     private boolean shouldCheck = false;//false-считаем вероятности, true-вскрываем наименьшую
     private boolean gameOver = false;//при вызове бота на уже решенном полеЛ,перенсти контроль поражений и побед в контроллер
     private int numberOfBestProbabilities;
     private int findedMines;
 
     Bot(Logic logic) {
-        cellThatBotKnow = new boolean[logic.getLevelHight() * logic.getLevelWidth()];
-        for (int i = 0; i < cellThatBotKnow.length; i++)
-            cellThatBotKnow[i] = false;
         flag = 0;
         this.logic = logic;
         botCells = new ArrayList<>();
@@ -29,8 +25,6 @@ class Bot {
     void reload() {
 
         findedMines = 0;
-        for (int i = 0; i < cellThatBotKnow.length; i++)
-            cellThatBotKnow[i] = false;
         botCells.clear();
         flag = 0;
         gameOver = false;
@@ -44,26 +38,22 @@ class Bot {
             return;
         }
 
-        if (flag == logic.getMinesDigit() && logic.getLogicCells().length - botCells.size() == logic.getMinesDigit()) {
-            gameOver = true;
-            win++;
-        }
-
-
-        //Делай ход наверняка
+        //Делает ход наверняка
+        //Пробуем походить, как человек
         //Если не получилось, считаем рандом
         if (botCells.size() != 0) {
-            boolean currentStep = easyStep();
-            if (!currentStep)
+            boolean easyStep = easyStep();
+            boolean stepAsHuman = stepAsHuman();
+            if (!easyStep && !stepAsHuman)
                 if (shouldCheck) {
                     check(numberOfBestProbabilities);
                     shouldCheck = false;
                 } else {
-                    numberOfBestProbabilities = calculateProbabilities(logic.getLogicCells());
+                    numberOfBestProbabilities = calculateProbabilities();
                     shouldCheck = true;
                 }
         } else
-            check(random.nextInt(80));
+            check(random.nextInt(logic.getLogicCells().length));
 
 
         checkResult();
@@ -96,7 +86,6 @@ class Bot {
                         findedMines++;
                         if (graphic != null)
                             graphic.getGraphicCells()[number].setFlag();
-                        cellThatBotKnow[number] = true;
                         flag++;
                         doSomething = true;
                     }
@@ -109,7 +98,6 @@ class Bot {
                         addedCells.add(logic.getLogicCells()[number].checkBot());
                         if (graphic != null)
                             graphic.getGraphicCells()[number].checkBot();
-                        cellThatBotKnow[number] = true;
                         if (addedCells.get(addedCells.size() - 1).getConditon() == 9) {
                             lose++;
                             gameOver = true;
@@ -131,28 +119,14 @@ class Bot {
         return doSomething;
     }
 
-    //Проверка условий
-    private void checkResult() {
+    //
+    private boolean stepAsHuman() {
 
-        //Выход из игры если нашли все мины,кажется тут была вероятность попадания в бесконечный цикл
-        if (flag == logic.getMinesDigit() && logic.getLogicCells().length - botCells.size() == logic.getMinesDigit()) {
-            win++;
-            gameOver = true;
-            return;
-        }
-
-        //Если вскрыли бомбу проигрываем
-        if (botCells.get(botCells.size() - 1).getConditon() == 9) {
-            lose++;
-            gameOver = true;
-        }
-
-
+        return false;
     }
 
-
     //Метод, который будет считать вероятности нахождения мины в каждой клетке
-    private int calculateProbabilities(LogicCell[] logicCells) {
+    private int calculateProbabilities() {
         for (LogicCell logicCell : logic.getLogicCells())
             logicCell.probabilities = 1;
 
@@ -199,7 +173,6 @@ class Bot {
             }
             if (logicCell.probabilities == 0) {
                 logicCell.probabilities = 1;
-                System.out.println("Ало математика");
             }
 
 
@@ -218,6 +191,25 @@ class Bot {
 
 
         return indexOfCheck;
+    }
+
+    //Проверка условий
+    private void checkResult() {
+
+        //Выход из игры если нашли все мины,кажется тут была вероятность попадания в бесконечный цикл
+        if (flag == logic.getMinesDigit() && logic.getLogicCells().length - botCells.size() == logic.getMinesDigit()) {
+            win++;
+            gameOver = true;
+            return;
+        }
+
+        //Если вскрыли бомбу проигрываем
+        if (botCells.get(botCells.size() - 1).getConditon() == 9) {
+            lose++;
+            gameOver = true;
+        }
+
+
     }
 
 
@@ -251,8 +243,22 @@ class Bot {
     }
 
 
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setFlagToLogicMines(int number) {
+        logic.getLogicCells()[number].setFlag(true);
+        findedMines++;
+        if (graphic != null)
+            graphic.getGraphicCells()[number].setFlag();
+        flag++;
+
+
+    }
 
     //Геттеры
+
 
 }
 
