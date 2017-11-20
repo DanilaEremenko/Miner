@@ -179,6 +179,26 @@ class Bot {
         }
 
 
+        //Нормализуем значения
+        for (int i = 0; i < 100; i++)
+            for (LogicCell cell : botCells) {
+                double balancingMultiplier = 0;
+                for (int number : cell.getNearlyCells()) {
+                    if (number != -10)
+                        if (!logic.getLogicCells()[number].isChecked() && !logic.getLogicCells()[number].isFlag())
+                            balancingMultiplier += logic.getLogicCells()[number].probabilities;
+
+                }
+                balancingMultiplier = cell.getConditon() / balancingMultiplier;
+                for (int number : cell.getNearlyCells()) {
+                    if (number != -10)
+                        if (!logic.getLogicCells()[number].isChecked() && !logic.getLogicCells()[number].isFlag())
+                            logic.getLogicCells()[number].probabilities *= balancingMultiplier;
+
+                }
+            }
+
+
         //Выбираем намиеньшую из всех
         double minimum = 10;
         int indexOfCheck = 0;
