@@ -24,7 +24,7 @@ public class BotTest {
             }
         }
         assertEquals(true, bot.getWin() + bot.getLose() == numberOfGames);
-        assertEquals(true, (double) bot.getWin() / numberOfGames * 100 > 65);
+        assertEquals(true, (double) bot.getWin() / numberOfGames * 100 > 70);
         System.out.println((double) bot.getWin() / numberOfGames * 100);
 
 
@@ -48,13 +48,30 @@ public class BotTest {
         bot.check(14);
         bot.helpMeBot();
         assertEquals(6, bot.getFindedMines());
-        assertEquals(10, bot.getBotCells().size() );
+        assertEquals(10, bot.getBotCells().size());
         assertEquals(true, bot.isGameOver());
     }
 
+    @Test
+    public void notEasyStep() {
+        int massMine[] = {3, 5};
+        logic = new Logic(3, 2, massMine);
+        bot = new Bot(logic);
+        while (!bot.isGameOver())
+            bot.helpMeBot();
+        assertEquals(bot.getBotCells().size(), logic.getLogicCells().length-massMine.length);
+        assertEquals(bot.getWin(), 1);
+
+
+        int massMine2[] = {5, 6};
+        logic = new Logic(4, 2, massMine2);
+        bot = new Bot(logic);
+        while (!bot.isGameOver())
+            bot.helpMeBot();
+        assertEquals(bot.getBotCells().size(), logic.getLogicCells().length-massMine2.length);
+        assertEquals(bot.getWin(), 1);
+    }
 }
-
-
 
 
 //Тестовые ситуации
