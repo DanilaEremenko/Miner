@@ -24,7 +24,7 @@ class Logic {
         levelWidth = weight;
         this.minesDigit = minesDigit;
         levelHight = hight;
-        logicCells = new LogicCell[hight*weight];
+        logicCells = new LogicCell[hight * weight];
         bombs = new LogicCell[minesDigit];
         int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
         common(weight, hight, numbersOfMines);
@@ -35,7 +35,7 @@ class Logic {
 
         for (int i = 0; i < hight; i++)
             for (int j = 0; j < weight; j++)
-                logicCells[i*weight + j] = new LogicCell(0, j + 1, i + 1, i * weight + j);
+                logicCells[i * weight + j] = new LogicCell(0, j + 1, i + 1, i * weight + j);
 
         int bombIndex = 0;
         for (int i = 0; i < hight; i++)
@@ -94,13 +94,11 @@ class Logic {
     * Все что выше для конструктора*/
 
 
-    //Перезагрузка уровня
-    void reload() {
+    //Общая часть reload-ов
+    private void reloadCommon(int []numbersOfMines){
         for (int i = 0; i < bombs.length; i++)
             bombs[i] = null;
 
-
-        int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
 
         int bombIndex = 0;
         for (int i = 0; i < levelHight; i++)
@@ -108,19 +106,31 @@ class Logic {
                 if (contains(levelWidth * i + j, numbersOfMines)) {
 
                     logicCells[i * levelWidth + j].setConditon(9);
-                    bombs[bombIndex]= logicCells[i * levelWidth + j];
+                    bombs[bombIndex] = logicCells[i * levelWidth + j];
                     bombIndex++;
                 } else
                     logicCells[i * levelWidth + j].setConditon(0);
 
             }
         for (LogicCell logicCell : logicCells) {
-            logicCell.probabilities=1;
+            logicCell.probabilities = 1;
             logicCell.setFlag(false);
             logicCell.setChecked(false);
         }
         for (LogicCell bomb : bombs)
             bomb.setConditions(logicCells);
+
+    }
+
+    //Перезагрузка уровня
+    void reload() {
+        reloadCommon(generateNumbersOfMines(minesDigit));
+
+    }
+
+    //Перезагрузка уровня с заданными индексами мин
+    void reload(int[] massMines) {
+        reloadCommon(massMines);
 
     }
 
