@@ -48,6 +48,7 @@ public class Controller extends Application {
                     break;
 
                 case T:
+                    System.out.println("Перезагрузка последнего уровня");
                     logic.reloadLast();
                     graphic.reloadLast();
                     myManBot.reload();

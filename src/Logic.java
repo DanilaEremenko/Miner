@@ -95,7 +95,7 @@ class Logic {
 
 
     //Общая часть reload-ов
-    private void reloadCommon(int []numbersOfMines){
+    private void reloadCommon(int[] numbersOfMines) {
         for (int i = 0; i < bombs.length; i++)
             bombs[i] = null;
 
@@ -136,7 +136,6 @@ class Logic {
 
     //Перезагрузка последнего уровня
     void reloadLast() {
-        System.out.println("Перезагрузка последнего уровня");
         for (LogicCell logicCell : logicCells) {
             logicCell.setFlag(false);
             logicCell.setChecked(false);
