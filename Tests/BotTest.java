@@ -56,53 +56,68 @@ public class BotTest {
         int massMine[] = {3, 5};
         logic = new Logic(3, 2, massMine);
         bot = new Bot(logic);
-        bot.check(0);
-        bot.check(1);
-        bot.check(2);
-        while (!bot.isGameOver())
-            bot.helpMeBot();
-        assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine.length);
-        assertEquals(1, bot.getWin());
+        for (int i = 0; i < 10; i++) {
+            bot.check(0);
+            bot.check(1);
+            bot.check(2);
+            while (!bot.isGameOver())
+                bot.helpMeBot();
+            assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine.length);
+            logic.reloadLast();
+            bot.reload();
+        }
+        assertEquals(10, bot.getWin());
         assertEquals(0, bot.getLose());
 
         int massMine2[] = {1, 5};
         logic = new Logic(2, 3, massMine2);
-        bot=new Bot(logic);
-        bot.check(0);
-        bot.check(2);
-        bot.check(4);
-        while (!bot.isGameOver())
-            bot.helpMeBot();
-        assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine2.length);
-        assertEquals(1, bot.getWin());
+        bot = new Bot(logic);
+        for (int i = 0; i < 10; i++) {
+            bot.check(0);
+            bot.check(2);
+            bot.check(4);
+            while (!bot.isGameOver())
+                bot.helpMeBot();
+            assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine.length);
+            logic.reloadLast();
+            bot.reload();
+        }
+        assertEquals(10, bot.getWin());
         assertEquals(0, bot.getLose());
-
 
         int massMine3[] = {5, 6};
         logic = new Logic(4, 2, massMine3);
         bot = new Bot(logic);
-        bot.check(0);
-        bot.check(1);
-        bot.check(2);
-        bot.check(3);
-        while (!bot.isGameOver())
-            bot.helpMeBot();
-        assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine3.length);
-        assertEquals(bot.getWin(), 1);
+        for (int i = 0; i < 10; i++) {
+            bot.check(0);
+            bot.check(1);
+            bot.check(2);
+            bot.check(3);
+            while (!bot.isGameOver())
+                bot.helpMeBot();
+            assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine3.length);
+            logic.reloadLast();
+            bot.reload();
+        }
+        assertEquals(10, bot.getWin());
         assertEquals(0, bot.getLose());
 
 
         int massMine4[] = {3, 5};
         logic = new Logic(2, 4, massMine4);
         bot = new Bot(logic);
-        bot.check(0);
-        bot.check(2);
-        bot.check(4);
-        bot.check(6);
-        while (!bot.isGameOver())
-            bot.helpMeBot();
-        assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine4.length);
-        assertEquals(bot.getWin(), 1);
+        for (int i = 0; i < 10; i++) {
+            bot.check(0);
+            bot.check(2);
+            bot.check(4);
+            bot.check(6);
+            while (!bot.isGameOver())
+                bot.helpMeBot();
+            assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine4.length);
+            logic.reloadLast();
+            bot.reload();
+        }
+        assertEquals(10, bot.getWin());
         assertEquals(0, bot.getLose());
 
     }
