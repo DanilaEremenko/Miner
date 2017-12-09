@@ -11,9 +11,9 @@ public class BotTest {
 
     @Test
     public void botWinRate() {
-        int numberOfGames = 10000;
         logic = new Logic(9, 9, 10);
         bot = new Bot(logic);
+        int numberOfGames = 10000;
         for (int i = 0; i < numberOfGames; ) {
             bot.helpMeBot();
             if (bot.isGameOver()) {
@@ -24,8 +24,27 @@ public class BotTest {
         }
         assertEquals(true, bot.getWin() + bot.getLose() == numberOfGames);
         assertEquals(true, (double) bot.getWin() / numberOfGames * 100 > 70);
-        System.out.println((double) bot.getWin() / numberOfGames * 100);
+        System.out.println("Играя на нормальном = " + (double) bot.getWin() / numberOfGames * 100+"%");
 
+
+    }
+
+    @Test
+    public void expertTest() {
+        logic = new Logic(30, 16, 99);
+        bot = new Bot(logic);
+        int numberOfGames = 1000;
+        for (int i = 0; i < numberOfGames; ) {
+            bot.helpMeBot();
+            if (bot.isGameOver()) {
+                logic.reload();
+                bot.reload();
+                i++;
+            }
+        }
+        assertEquals(true, bot.getWin() + bot.getLose() == numberOfGames);
+        assertEquals(true, (double) bot.getWin()*100 / numberOfGames > 2);
+        System.out.println("Играя на эксперте = " + (double) bot.getWin()*100 / numberOfGames+"%");
 
     }
 
