@@ -1,36 +1,45 @@
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-public class Graphic {
+class Graphic {
 
+    private Label botsPhrase;
     private Pane root;//Игровая панель
-    private Pane rootGameOver;//Панель проигрыша
-    private Pane rootWin;//Панель выигрыша
+    private Label defaultLabel;
+    private Label loseLabel;//Панель проигрыша
+    private Label winLabel;//Панель выигрыша
     private Pane mainRoot;//Панель на которой хранятся все остальные панели
     private Scene scene;
     private Logic logic;
+    private Bot bot;
     private GraphicCell[] graphicCells;
-    final private int sceneWidth = 600;//Длина сцены
-    final private int sceneHight = 600;//Высота сцены
+    private double sceneWidth;//Длина сцены
+    private double sceneHight;//Высота сцены
 
 
-    Graphic(Logic logic) {
+    Graphic(Logic logic, Bot bot) throws MalformedURLException {
+        this.bot = bot;
         graphicCells = new GraphicCell[logic.getLevelWidth() * logic.getLevelHight()];
         this.logic = logic;
-        for (int i = 0; i < graphicCells.length; i++)
-            graphicCells[i] = new GraphicCell(logic.getLogicCells()[i]);
+        for (int i = 0; i < logic.getLevelHight(); i++)
+            for (int j = 0; j < logic.getLevelWidth(); j++)
+                graphicCells[i * logic.getLevelWidth() + j] = new GraphicCell(logic.getLogicCells()[i * logic.getLevelWidth() + j], j, i);
 
+        calculateSceneSize();
         mainRoot = new Pane();
-        rootGameOver = new Pane(new Label("GAME OVER"));
-        rootWin = new Pane(new Label("WIN"));
-        rootGameOver.setVisible(false);
-        rootWin.setVisible(false);
-        root = new Pane();
+        root = createGamePain("Визуализация бота\\doger.png", "Визуализация бота\\lose.png", "Визуализация бота\\win.png");
 
-        mainRoot.getChildren().addAll(root, rootGameOver, rootWin);
+        loseLabel.setVisible(false);
+        winLabel.setVisible(false);
+
+        mainRoot.getChildren().addAll(root, loseLabel, winLabel);
         scene = new Scene(mainRoot, sceneWidth, sceneHight);
 
         for (GraphicCell graphicCell : graphicCells)
@@ -42,6 +51,59 @@ public class Graphic {
 
     }
 
+    private void calculateSceneSize() {
+        sceneWidth = graphicCells[graphicCells.length - 1].getTranslateX() + graphicCells[graphicCells.length - 1].getPrefWidth() + 200;
+        sceneHight = graphicCells[graphicCells.length - 1].getTranslateY() + graphicCells[graphicCells.length - 1].getHeight() -
+                graphicCells[0].getTranslateY() + 250;
+
+    }
+
+
+    private Pane createGamePain(String defaultURL, String URLlose, String URLwin) throws MalformedURLException {
+        Pane pane = new Pane();
+        defaultLabel = createLabel(defaultURL);
+        loseLabel = createLabel(URLlose);
+        winLabel = createLabel(URLwin);
+
+        botsPhrase = new Label(bot.getPhrase());
+        botsPhrase.setTranslateX(defaultLabel.getPrefWidth());
+        botsPhrase.setTranslateY(defaultLabel.getTranslateY());
+        pane.getChildren().addAll(defaultLabel, winLabel, loseLabel, botsPhrase);
+        return pane;
+
+    }
+
+    private Label createLabel(String URL) throws MalformedURLException {
+        File file = new File(URL);
+        Image image = new Image(file.toURI().toURL().toString());
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(200);
+        imageView.setFitWidth(200);
+
+        Label label = new Label();
+        label.setGraphic(imageView);
+        label.setPrefWidth(imageView.getFitWidth());
+        label.setPrefHeight(imageView.getFitHeight());
+        label.setTranslateX(0);
+        label.setTranslateY(sceneHight - imageView.getFitHeight());
+
+        return label;
+    }
+
+    void checkTerms() {
+        if (logic.isGameOver()) {
+            defaultLabel.setVisible(false);
+            if (logic.isWin()) {
+                winLabel.setVisible(true);
+            } else
+                loseLabel.setVisible(true);
+        } else {
+            defaultLabel.setVisible(true);
+            loseLabel.setVisible(false);
+            winLabel.setVisible(false);
+        }
+    }
+
     void printProabilities() {
         for (GraphicCell graphicCell : graphicCells)
             if (!graphicCell.getLogicCell().isFlag() && !graphicCell.getLogicCell().isChecked())
@@ -49,10 +111,15 @@ public class Graphic {
 
     }
 
+    void printBotsPhrase() {
+        botsPhrase.setText(bot.getPhrase());
+    }
+
     //Перезагрузка уровня
     void reload() {
-        rootGameOver.setVisible(false);
-        rootWin.setVisible(false);
+        loseLabel.setVisible(false);
+        winLabel.setVisible(false);
+        defaultLabel.setVisible(true);
         root.setVisible(true);
         for (GraphicCell graphicCell : graphicCells) {
             graphicCell.setStyle(" -fx-base: #FAFAFA;");
@@ -68,8 +135,9 @@ public class Graphic {
     //Перезагрузка последнего уровня
     void reloadLast() {
         System.out.println("Перезагрузка последнего уровня");
-        rootGameOver.setVisible(false);
-        rootWin.setVisible(false);
+        loseLabel.setVisible(false);
+        winLabel.setVisible(false);
+        defaultLabel.setVisible(true);
         root.setVisible(true);
         for (GraphicCell graphicCell : graphicCells) {
             graphicCell.setStyle(" -fx-base: #FAFAFA;");
@@ -82,17 +150,6 @@ public class Graphic {
 
     }
 
-    //Установка панели победы(при успешном прохождении игры)
-    void gameWin() {
-        root.setVisible(false);
-        rootWin.setVisible(true);
-    }
-
-    // Установка панели проигрыша(при вскрытии бомбы)
-    void gameOver() {
-        root.setVisible(false);
-        rootGameOver.setVisible(true);
-    }
 
     //Показывает изначальные условия(для кнопки ESC)
     void checkAll() {
@@ -105,12 +162,13 @@ public class Graphic {
             }
             graphicCell.getLabelProbabilitiys().setVisible(false);
         }
-        rootGameOver.setVisible(false);
-        rootWin.setVisible(false);
+        loseLabel.setVisible(false);
+        winLabel.setVisible(false);
         root.setVisible(true);
 
 
     }
+
 
     //Геттеры
     Scene getScene() {
