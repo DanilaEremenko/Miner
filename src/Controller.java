@@ -10,17 +10,11 @@ public class Controller extends Application {
 
     public void start(Stage primaryStage) throws Exception {
 
-        int massMine[] = {3, 5};
-        logic = new Logic(3, 2, massMine);
-        myManBot = new Bot(logic);
-        graphic = new Graphic(logic);
-        myManBot.setGraphic(graphic);
 
-        myManBot.check(0);
-        myManBot.check(1);
-        myManBot.check(2);
-        //myManBot.setFlagToLogicMines(3);
-        //myManBot.setFlagToLogicMines(8);
+        logic = new Logic(9, 9, 10);
+        myManBot = new Bot(logic);
+        graphic = new Graphic(logic, myManBot);
+        myManBot.setGraphic(graphic);
 
 
         System.out.println("Побед " + myManBot.getWin() + "\nПоражений " + myManBot.getLose());
@@ -32,7 +26,9 @@ public class Controller extends Application {
 
                 case B:
                     myManBot.helpMeBot();
+                    graphic.printBotsPhrase();
                     graphic.printProabilities();
+                    graphic.checkTerms();
                     break;
 
                 case ESCAPE:

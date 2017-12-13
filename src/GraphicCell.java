@@ -9,12 +9,12 @@ class GraphicCell extends Button {
     private Content myContent;
     private Label labelProbabilitiys;//Визуализация вероятности мины на клетке
 
-    GraphicCell(LogicCell logicCell) {
+    GraphicCell(LogicCell logicCell, int x, int y) {
         this.logicCell = logicCell;
         setStyle(" -fx-base: #FAFAFA;");//
         setPrefSize(50, 50);
-        setTranslateX(logicCell.getX() * 50);
-        setTranslateY(logicCell.getY() * 50);
+        setTranslateX(x * 50);
+        setTranslateY(y * 50);
         labelProbabilitiys = new Label();
         labelProbabilitiys.setStyle("-fx-font-size:20;");
         labelProbabilitiys.setTranslateX(getTranslateX());

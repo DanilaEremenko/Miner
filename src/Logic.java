@@ -9,6 +9,8 @@ class Logic {
     private int minesDigit;//Колличество мин
     private int levelWidth;//Число клеток в ширину
     private int levelHight;//Число клеток в высоту
+    private boolean gameOver = false;
+    private boolean win = false;
 
 
     Logic(int weight, int hight, int[] numbersOfMines) {
@@ -33,9 +35,8 @@ class Logic {
     //Общий метод использующийся в конструкторах
     private void common(int weight, int hight, int[] numbersOfMines) {
 
-        for (int i = 0; i < hight; i++)
-            for (int j = 0; j < weight; j++)
-                logicCells[i * weight + j] = new LogicCell(0, j + 1, i + 1, i * weight + j);
+        for (int i = 0; i < logicCells.length; i++)
+            logicCells[i] = new LogicCell(0,i);
 
         int bombIndex = 0;
         for (int i = 0; i < hight; i++)
@@ -96,6 +97,8 @@ class Logic {
 
     //Общая часть reload-ов
     private void reloadCommon(int[] numbersOfMines) {
+        win = false;
+        gameOver = false;
         for (int i = 0; i < bombs.length; i++)
             bombs[i] = null;
 
@@ -136,6 +139,8 @@ class Logic {
 
     //Перезагрузка последнего уровня
     void reloadLast() {
+        win = false;
+        gameOver = false;
         for (LogicCell logicCell : logicCells) {
             logicCell.setFlag(false);
             logicCell.setChecked(false);
@@ -145,13 +150,13 @@ class Logic {
     //Установка панели победы(при успешном прохождении игры)
     static void gameWin() {
         System.out.println("Победа");
-        Controller.getGraphic().gameWin();
+        Controller.getGraphic().checkTerms();
     }
 
     // Установка панели проигрыша(при вскрытии бомбы)
     void gameOver() {
         System.out.println("Поражение");
-        Controller.getGraphic().gameOver();
+        Controller.getGraphic().checkTerms();
     }
 
     //Показывает условия(для кнопки ESC)
@@ -184,6 +189,34 @@ class Logic {
         return bombs;
     }
 
+    public boolean isGameOver() {
+        for (LogicCell bomb : bombs)
+            if (bomb.isChecked()) {
+                gameOver = true;
+                win = false;
+                return gameOver;
+            }
 
+
+        int checkedCell = 0;
+        int findedBombs = 0;
+        for (LogicCell cell : logicCells) {
+            if (cell.isFlag())
+                findedBombs++;
+            if (cell.isChecked())
+                checkedCell++;
+        }
+
+        if (findedBombs + checkedCell == logicCells.length) {
+            gameOver = true;
+            win = true;
+        }
+
+        return gameOver;
+    }
+
+    public boolean isWin() {
+        return win;
+    }
 }
 

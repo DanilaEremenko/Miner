@@ -1,6 +1,5 @@
 class LogicCell {
-    private int x;//Координата X, для графики
-    private int y;//Коориданат Y, для графиик
+
     private int conditon;//Колличество мин вокруг клетки, 9 обозначается мина
     private boolean isChecked = false;//Проверена ли клетка
     final private int numberInArray;//Номер клетки в массиве cells
@@ -10,9 +9,7 @@ class LogicCell {
     //Если isChecked-то вероятность группы, если !isChecked-то вероятность рандома
 
 
-    LogicCell(int conditon, int x, int y, int numberInArray) {
-        this.x = x;
-        this.y = y;
+    LogicCell(int conditon, int numberInArray) {
         this.numberInArray = numberInArray;
         this.conditon = conditon;
 
@@ -63,9 +60,6 @@ class LogicCell {
     LogicCell checkBot() {
         this.isChecked = true;
         isChecked = true;
-        if (conditon == 9)
-            //Вывести проигрыш
-            ;
 
         return this;
     }
@@ -160,14 +154,6 @@ class LogicCell {
 
     boolean isFlag() {
         return flag;
-    }
-
-    int getX() {
-        return x;
-    }
-
-    int getY() {
-        return y;
     }
 
     public double getProbabilities() {

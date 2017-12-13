@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 public class BotTest {
 
 
-    Logic logic;
-    Bot bot;
+    private Logic logic;
+    private Bot bot;
 
 
     @Test
@@ -16,7 +16,7 @@ public class BotTest {
         int numberOfGames = 10000;
         for (int i = 0; i < numberOfGames; ) {
             bot.helpMeBot();
-            if (bot.isGameOver()) {
+            if (logic.isGameOver()) {
                 logic.reload();
                 bot.reload();
                 i++;
@@ -36,7 +36,7 @@ public class BotTest {
         int numberOfGames = 1000;
         for (int i = 0; i < numberOfGames; ) {
             bot.helpMeBot();
-            if (bot.isGameOver()) {
+            if (logic.isGameOver()) {
                 logic.reload();
                 bot.reload();
                 i++;
@@ -67,7 +67,7 @@ public class BotTest {
         bot.helpMeBot();
         assertEquals(6, bot.getFindedMines());
         assertEquals(10, bot.getBotCells().size());
-        assertEquals(true, bot.isGameOver());
+        assertEquals(true, logic.isGameOver());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class BotTest {
             bot.check(0);
             bot.check(1);
             bot.check(2);
-            while (!bot.isGameOver())
+            while (!logic.isGameOver())
                 bot.helpMeBot();
             assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine.length);
             logic.reloadLast();
@@ -95,7 +95,7 @@ public class BotTest {
             bot.check(0);
             bot.check(2);
             bot.check(4);
-            while (!bot.isGameOver())
+            while (!logic.isGameOver())
                 bot.helpMeBot();
             assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine.length);
             logic.reloadLast();
@@ -112,7 +112,7 @@ public class BotTest {
             bot.check(1);
             bot.check(2);
             bot.check(3);
-            while (!bot.isGameOver())
+            while (!logic.isGameOver())
                 bot.helpMeBot();
             assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine3.length);
             logic.reloadLast();
@@ -130,7 +130,7 @@ public class BotTest {
             bot.check(2);
             bot.check(4);
             bot.check(6);
-            while (!bot.isGameOver())
+            while (!logic.isGameOver())
                 bot.helpMeBot();
             assertEquals(bot.getBotCells().size(), logic.getLogicCells().length - massMine4.length);
             logic.reloadLast();
@@ -142,25 +142,3 @@ public class BotTest {
     }
 }
 
-
-//Тестовые ситуации
-//1
-//        int[] numbersOfMines = {0, 2, 3, 5};
-//       logic = new Logic(3, 4, numbersOfMines);
-//     bot = new Bot(logic);
-//bot.check(4);
-//bot.check(7);
-//2
-//int[]numbersOfMines={17,19,20,23,13};
-//logic =new Logic(9,9,numbersOfMines);
-//Bot bot=new Bot(logic);
-//bot.check(0);
-//3
-//int[] mines = {7, 25, 27, 33, 55};
-//logic = new Logic(9, 9, mines);
-//Bot bot=new Bot(logic);
-//bot.check(0);
-//4
-//int mines[] = {1, 2, 3, 4, 5, 6, 7};
-//logic = new Logic(9, 9, mines);
-//Bot bot=new Bot(logic);

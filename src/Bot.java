@@ -2,20 +2,19 @@ import java.util.ArrayList;
 import java.util.Random;
 
 class Bot {
+    private String phrase;
     private Random random;
     private int lose = 0;//Для ведения подсчета поражений
     private int win = 0;//Для ведения подсчет побед
     private Logic logic;
     private Graphic graphic;
     private ArrayList<LogicCell> botCells;//Клетки раскрыте ботом
-    private int flag;//Колличество найденных мин
     private boolean shouldCheck = false;//false-считаем вероятности, true-вскрываем наименьшую
     private boolean gameOver = false;//при вызове бота на уже решенном полеЛ,перенсти контроль поражений и побед в контроллер
     private int numberOfBestProbabilities;
     private int findedMines;
 
     Bot(Logic logic) {
-        flag = 0;
         this.logic = logic;
         botCells = new ArrayList<>();
         random = new Random();
@@ -26,35 +25,42 @@ class Bot {
 
         findedMines = 0;
         botCells.clear();
-        flag = 0;
         gameOver = false;
     }
 
 
     //Вызов бота
     void helpMeBot() {
+        phrase = "НУ ЧЕ ОБЕЗЯНИЙ СЫН\nЩАС Я ТЕБЕ ПОКАЖУ КАК ЭТО ДЕЛАЕТСЯ\n";
         if (gameOver) {
             System.out.println(win + " побед\n" + lose + " поражений");
             return;
         }
 
-        //Делает ход наверняка
-        //Пробуем походить, как человек
-        //Если не получилось, считаем рандом
+        //1)Делает ход наверняка
+        //2)Пробуем походить, как человек
+        //3)Если не получилось, считаем рандом
         if (botCells.size() != 0) {
             boolean easyStep = easyStep();
+            if (easyStep)
+                phrase += "ЭТОТ ХОД ДАЖЕ ТЫ БЫ СМОГ СДЕЛАТЬ...";
             boolean stepAsHuman = stepAsHuman();
+            if (stepAsHuman)
+                phrase += "НУ НА ТАКОЕ ТЫ ВРЯД ЛИ СПОСОБЕН";
             if (!easyStep && !stepAsHuman)
                 if (shouldCheck) {
+                    phrase = "Я ЖЕ ГОВОРИЛ ЭТО РАБОТАЕТ";
                     check(numberOfBestProbabilities);
                     shouldCheck = false;
                 } else {
+                    phrase = "СЧИТАЕМ ВЕРОЯТНОСТИ ПО СЕКРЕТНЫМ ОБЕЗЯНИМ ФОРМУЛАМ";
                     numberOfBestProbabilities = calculateProbabilities();
                     shouldCheck = true;
                 }
-        } else
+        } else {
             check(random.nextInt(logic.getLogicCells().length));
-
+            phrase = "ЭТО ЗА ПОРАЖЕНИЕ НЕ СЧИТАЕТСЯ";
+        }
 
         checkResult();
 
@@ -86,7 +92,6 @@ class Bot {
                         findedMines++;
                         if (graphic != null)
                             graphic.getGraphicCells()[number].setFlag();
-                        flag++;
                         doSomething = true;
                     }
                 }
@@ -216,24 +221,21 @@ class Bot {
     //Проверка условий
     private void checkResult() {
 
-        //Выход из игры если нашли все мины,кажется тут была вероятность попадания в бесконечный цикл
-        if (flag == logic.getMinesDigit() && logic.getLogicCells().length - botCells.size() == logic.getMinesDigit()) {
-            win++;
+        if (logic.isGameOver()) {
+            if (logic.isWin()) {
+                win++;
+                phrase = "ЧЕ САМ ВЫЙГРАЛ ДА?\nСКИНЬ ПАЦАНАМ СКРИН\nОБЕЗЯНИЙ СЫН\nСТАЯ КРУТО";
+            } else {
+                lose++;
+                phrase = "СЛЫШЬ ЧУВАК, ЭТО СЛУЧАЙНОСТЬ\nНАЖМИ R НА КЛАВЕ\nЧУВАК Я РАЗВАЛЮ";
+            }
             gameOver = true;
-            return;
-        }
 
-        //Если вскрыли бомбу проигрываем
-        if (botCells.get(botCells.size() - 1).getConditon() == 9) {
-            lose++;
-            gameOver = true;
         }
-
 
     }
 
-
-    public void check(int index) {
+    void check(int index) {
         botCells.add(logic.getLogicCells()[index].checkBot());
         if (graphic != null)
             graphic.getGraphicCells()[index].checkBot();
@@ -263,23 +265,9 @@ class Bot {
     }
 
 
-    public boolean isGameOver() {
-        return gameOver;
+    public String getPhrase() {
+        return phrase;
     }
-
-    public void setFlagToLogicMines(int number) {
-        logic.getLogicCells()[number].setFlag(true);
-        findedMines++;
-        if (graphic != null)
-            graphic.getGraphicCells()[number].setFlag();
-        flag++;
-
-
-    }
-
-    //Геттеры
-
-
 }
 
 
