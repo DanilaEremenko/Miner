@@ -31,7 +31,8 @@ class Bot {
 
     //Вызов бота
     void helpMeBot() {
-        phrase = "НУ ЧЕ ОБЕЗЯНИЙ СЫН\nЩАС Я ТЕБЕ ПОКАЖУ КАК ЭТО ДЕЛАЕТСЯ\n";
+        if (!gameOver)
+            phrase = "НУ ЧТО\nЩАС Я ТЕБЕ ПОКАЖУ КАК ЭТО ДЕЛАЕТСЯ\n";
         if (gameOver) {
             System.out.println(win + " побед\n" + lose + " поражений");
             return;
@@ -44,16 +45,13 @@ class Bot {
             boolean easyStep = easyStep();
             if (easyStep)
                 phrase += "ЭТОТ ХОД ДАЖЕ ТЫ БЫ СМОГ СДЕЛАТЬ...";
-            boolean stepAsHuman = stepAsHuman();
-            if (stepAsHuman)
-                phrase += "НУ НА ТАКОЕ ТЫ ВРЯД ЛИ СПОСОБЕН";
-            if (!easyStep && !stepAsHuman)
+            if (!easyStep)
                 if (shouldCheck) {
                     phrase = "Я ЖЕ ГОВОРИЛ ЭТО РАБОТАЕТ";
                     check(numberOfBestProbabilities);
                     shouldCheck = false;
                 } else {
-                    phrase = "СЧИТАЕМ ВЕРОЯТНОСТИ ПО СЕКРЕТНЫМ ОБЕЗЯНИМ ФОРМУЛАМ";
+                    phrase = "СЧИТАЕМ ВЕРОЯТНОСТИ ПО СЕКРЕТНЫМ ФОРМУЛАМ";
                     numberOfBestProbabilities = calculateProbabilities();
                     shouldCheck = true;
                 }
@@ -124,13 +122,8 @@ class Bot {
         return doSomething;
     }
 
-    //
-    private boolean stepAsHuman() {
 
-        return false;
-    }
-
-    //Метод, который будет считать вероятности нахождения мины в каждой клетке
+    //Метод, который считатет вероятности нахождения мины в каждой клетке
     private int calculateProbabilities() {
         for (LogicCell logicCell : logic.getLogicCells())
             logicCell.probabilities = 1;
@@ -224,10 +217,10 @@ class Bot {
         if (logic.isGameOver()) {
             if (logic.isWin()) {
                 win++;
-                phrase = "ЧЕ САМ ВЫЙГРАЛ ДА?\nСКИНЬ ПАЦАНАМ СКРИН\nОБЕЗЯНИЙ СЫН\nСТАЯ КРУТО";
+                phrase = "ЧЕ САМ ВЫЙГРАЛ ДА?\nСКИНЬ ПАЦАНАМ СКРИН\nСТАЯ КРУТО";
             } else {
                 lose++;
-                phrase = "СЛЫШЬ ЧУВАК, ЭТО СЛУЧАЙНОСТЬ\nНАЖМИ R НА КЛАВЕ\nЧУВАК Я РАЗВАЛЮ";
+                phrase = "СЛЫШЬ ЧУВАК, ЭТО СЛУЧАЙНОСТЬ\nНАЖМИ R НА КЛАВЕ\nЧУВАК Я ОТЫГРАЮСЬ";
             }
             gameOver = true;
 
@@ -235,18 +228,20 @@ class Bot {
 
     }
 
+    //Вскрытие клетки
     void check(int index) {
         botCells.add(logic.getLogicCells()[index].checkBot());
         if (graphic != null)
             graphic.getGraphicCells()[index].checkBot();
     }
 
+
     void setGraphic(Graphic graphic) {
         this.graphic = graphic;
     }
 
 
-//Геттеры
+    //Геттеры
 
     int getWin() {
         return win;
@@ -256,16 +251,16 @@ class Bot {
         return lose;
     }
 
-    public int getFindedMines() {
+    int getFindedMines() {
         return findedMines;
     }
 
-    public ArrayList<LogicCell> getBotCells() {
+    ArrayList<LogicCell> getBotCells() {
         return botCells;
     }
 
 
-    public String getPhrase() {
+    String getPhrase() {
         return phrase;
     }
 }
