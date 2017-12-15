@@ -58,72 +58,24 @@ class LogicCell {
 
     //Проверка клетки для бота, сделать для логической клетки
     LogicCell checkBot() {
-        this.isChecked = true;
         isChecked = true;
-
         return this;
     }
 
     //Установка флага(для бота)
+    void setFlag() {
+        flag = !flag;
+
+    }
+
     void setFlag(boolean flag) {
         this.flag = flag;
     }
 
-
-    //Проверка клетки,не для бота
-    private void check() {
-        if (isChecked)
-            return;
-        isChecked = true;
-        if (conditon == 9)
-            Controller.getLogic().gameOver();
-        if (conditon == 0) {
-            for (int number : nearlyCells)
-                if (number != -10)
-                    Controller.getLogic().getLogicCells()[number].check();
-
-        }
-
-
-    }
-
-
-    //Проверка колличества флагов
-    private void checkFlag() {
-        int c = 0;
-        for (LogicCell bomb : Controller.getLogic().getBombs())
-            if (bomb.flag)
-                c++;
-        if (c == Controller.getLogic().getMinesDigit())
-            Logic.gameWin();
-
-
-    }
-
     //Добавление к состоянию единицы,используется в printProabilities
-    private void addCondition() {
+    void addCondition() {
         if (conditon != 9)
             conditon++;
-    }
-
-    //Установка состояния на все мины,вызывайтся на минах
-    void setConditions(LogicCell[] logicCells) {
-        for (int number : nearlyCells)
-            if (number != -10)
-                logicCells[number].addCondition();
-
-
-    }
-
-    //Установка/снятие флага(для игрока)
-    private void dropFlag() {
-        if (!flag) {
-            flag = true;
-        } else {
-            flag = false;
-        }
-        checkFlag();
-
     }
 
 
@@ -138,9 +90,8 @@ class LogicCell {
         isChecked = checked;
     }
 
-    //возвращает -1, если клетка не вскрыта
-    int getConditon() {
 
+    int getConditon() {
         return conditon;
     }
 
@@ -156,7 +107,7 @@ class LogicCell {
         return flag;
     }
 
-    public double getProbabilities() {
+    double getProbabilities() {
         return probabilities;
     }
 
@@ -164,6 +115,5 @@ class LogicCell {
     boolean isChecked() {
         return isChecked;
     }
-
 
 }

@@ -9,8 +9,6 @@ class Logic {
     private int minesDigit;//Колличество мин
     private int levelWidth;//Число клеток в ширину
     private int levelHight;//Число клеток в высоту
-    private boolean gameOver = false;
-    private boolean win = false;
 
 
     Logic(int weight, int hight, int[] numbersOfMines) {
@@ -36,7 +34,7 @@ class Logic {
     private void common(int weight, int hight, int[] numbersOfMines) {
 
         for (int i = 0; i < logicCells.length; i++)
-            logicCells[i] = new LogicCell(0,i);
+            logicCells[i] = new LogicCell(0, i);
 
         int bombIndex = 0;
         for (int i = 0; i < hight; i++)
@@ -53,8 +51,18 @@ class Logic {
             logicCell.setNearlyCell(levelWidth, levelHight);
 
 
+        setConditions();
+
+
+    }
+
+
+    //Установка состояния на все мины,вызывайтся на минах
+    private void setConditions() {
         for (LogicCell bomb : bombs)
-            bomb.setConditions(logicCells);
+            for (int number : bomb.getNearlyCells())
+                if (number != -10)
+                    logicCells[number].addCondition();
 
 
     }
@@ -97,8 +105,6 @@ class Logic {
 
     //Общая часть reload-ов
     private void reloadCommon(int[] numbersOfMines) {
-        win = false;
-        gameOver = false;
         for (int i = 0; i < bombs.length; i++)
             bombs[i] = null;
 
@@ -120,8 +126,8 @@ class Logic {
             logicCell.setFlag(false);
             logicCell.setChecked(false);
         }
-        for (LogicCell bomb : bombs)
-            bomb.setConditions(logicCells);
+
+        setConditions();
 
     }
 
@@ -139,27 +145,14 @@ class Logic {
 
     //Перезагрузка последнего уровня
     void reloadLast() {
-        win = false;
-        gameOver = false;
         for (LogicCell logicCell : logicCells) {
             logicCell.setFlag(false);
             logicCell.setChecked(false);
         }
     }
 
-    //Установка панели победы(при успешном прохождении игры)
-    static void gameWin() {
-        System.out.println("Победа");
-        Controller.getGraphic().checkTerms();
-    }
 
-    // Установка панели проигрыша(при вскрытии бомбы)
-    void gameOver() {
-        System.out.println("Поражение");
-        Controller.getGraphic().checkTerms();
-    }
-
-    //Показывает условия(для кнопки ESC)
+    //Вывод условий в консоль
     void checkAll() {
         for (LogicCell bomb : bombs)
             System.out.print("" + bomb.getNumberInArray() + ",");
@@ -169,6 +162,7 @@ class Logic {
 
 
     //Геттеры
+
     int getMinesDigit() {
         return minesDigit;
     }
@@ -189,13 +183,10 @@ class Logic {
         return bombs;
     }
 
-    public boolean isGameOver() {
+    boolean isGameOver() {
         for (LogicCell bomb : bombs)
-            if (bomb.isChecked()) {
-                gameOver = true;
-                win = false;
-                return gameOver;
-            }
+            if (bomb.isChecked())
+                return true;
 
 
         int checkedCell = 0;
@@ -207,16 +198,27 @@ class Logic {
                 checkedCell++;
         }
 
-        if (findedBombs + checkedCell == logicCells.length) {
-            gameOver = true;
-            win = true;
-        }
+        return findedBombs + checkedCell == logicCells.length;
 
-        return gameOver;
+
     }
 
-    public boolean isWin() {
-        return win;
+    boolean isWin() {
+        for (LogicCell bomb : bombs)
+            if (bomb.isChecked())
+                return false;
+
+
+        int checkedCell = 0;
+        int findedBombs = 0;
+        for (LogicCell cell : logicCells) {
+            if (cell.isFlag())
+                findedBombs++;
+            if (cell.isChecked())
+                checkedCell++;
+        }
+
+        return findedBombs + checkedCell == logicCells.length;
     }
 }
 
