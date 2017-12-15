@@ -27,10 +27,14 @@ class GraphicCell extends Button {
             myContent = new Content(this, 0);
 
         setOnKeyPressed(event -> {
-                    if (event.getCode() == KeyCode.SPACE)
+                    if (event.getCode() == KeyCode.SPACE) {
+                        logicCell.setFlag();
                         dropFlag();
-                    if (event.getCode() == KeyCode.ENTER)
+                    }
+                    if (event.getCode() == KeyCode.ENTER) {
+                        Controller.getMyManBot().check(logicCell.getNumberInArray());
                         check();
+                    }
 
                 }
         );
@@ -76,7 +80,7 @@ class GraphicCell extends Button {
     }
 
 
-    //Сеттеры, геттеры, проверки
+    //Сеттеры, геттеры
 
     void printLabelProbabilitiys() {
         labelProbabilitiys.setText(String.format("%.2f", logicCell.getProbabilities()));

@@ -50,6 +50,7 @@ public class Controller extends Application {
                     myManBot.reload();
                     break;
 
+
             }
         });
 
@@ -72,6 +73,10 @@ public class Controller extends Application {
 
     static Graphic getGraphic() {
         return graphic;
+    }
+
+    static Bot getMyManBot(){
+        return myManBot;
     }
 
 }
