@@ -6,28 +6,28 @@ class Logic {
 
     private LogicCell[] logicCells;
     private LogicCell[] bombs;
-    private int minesDigit;//Колличество мин
-    private int levelWidth;//Число клеток в ширину
-    private int levelHight;//Число клеток в высоту
+    private int minesDigit;
+    private int levelWidth;
+    private int levelHight;
 
 
-    Logic(int weight, int hight, int[] numbersOfMines) {
-        levelWidth = weight;
+    Logic(int width, int hight, int[] numbersOfMines) {
+        levelWidth = width;
         levelHight = hight;
         this.minesDigit = numbersOfMines.length;
-        logicCells = new LogicCell[weight * hight];
+        logicCells = new LogicCell[width * hight];
         bombs = new LogicCell[numbersOfMines.length];
-        common(weight, hight, numbersOfMines);
+        common(width, hight, numbersOfMines);
     }
 
-    Logic(int weight, int hight, int minesDigit) {
-        levelWidth = weight;
+    Logic(int width, int hight, int minesDigit) {
+        levelWidth = width;
         this.minesDigit = minesDigit;
         levelHight = hight;
-        logicCells = new LogicCell[hight * weight];
+        logicCells = new LogicCell[hight * width];
         bombs = new LogicCell[minesDigit];
         int[] numbersOfMines = generateNumbersOfMines(minesDigit);//массив, который хранит номера мин
-        common(weight, hight, numbersOfMines);
+        common(width, hight, numbersOfMines);
     }
 
     //Общий метод использующийся в конструкторах
@@ -51,14 +51,14 @@ class Logic {
             logicCell.setNearlyCell(levelWidth, levelHight);
 
 
-        setConditions();
+        addCondition();
 
 
     }
 
 
     //Установка состояния на все мины,вызывайтся на минах
-    private void setConditions() {
+    private void addCondition() {
         for (LogicCell bomb : bombs)
             for (int number : bomb.getNearlyCells())
                 if (number != -10)
@@ -127,7 +127,7 @@ class Logic {
             logicCell.setChecked(false);
         }
 
-        setConditions();
+        addCondition();
 
     }
 
@@ -161,7 +161,7 @@ class Logic {
     }
 
 
-    //Геттеры
+    //Getters
 
     int getMinesDigit() {
         return minesDigit;

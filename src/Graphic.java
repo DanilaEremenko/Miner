@@ -20,8 +20,8 @@ class Graphic {
     private Logic logic;
     private Bot bot;
     private GraphicCell[] graphicCells;
-    private double sceneWidth;//Длина сцены
-    private double sceneHight;//Высота сцены
+    private double sceneWidth;
+    private double sceneHight;
 
 
     Graphic(Logic logic, Bot bot) throws MalformedURLException {
@@ -34,7 +34,7 @@ class Graphic {
 
         calculateSceneSize();
         mainRoot = new Pane();
-        root = createGamePain("Визуализация бота\\doger.png", "Визуализация бота\\lose.png", "Визуализация бота\\win.png");
+        root = createGamePain("Pictures\\doger.png", "Pictures\\lose.png", "Pictures\\win.png");
 
         loseLabel.setVisible(false);
         winLabel.setVisible(false);
@@ -134,7 +134,7 @@ class Graphic {
 
     //Перезагрузка последнего уровня
     void reloadLast() {
-        System.out.println("Перезагрузка последнего уровня");
+        System.out.println("Reload of last level");
         loseLabel.setVisible(false);
         winLabel.setVisible(false);
         defaultLabel.setVisible(true);

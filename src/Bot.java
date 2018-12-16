@@ -34,7 +34,7 @@ class Bot {
         if (!gameOver)
             phrase = "НУ ЧТО\nЩАС Я ТЕБЕ ПОКАЖУ КАК ЭТО ДЕЛАЕТСЯ\n";
         if (gameOver) {
-            System.out.println(win + " побед\n" + lose + " поражений");
+            System.out.println(win + " wins\n" + lose + " losses");
             return;
         }
 

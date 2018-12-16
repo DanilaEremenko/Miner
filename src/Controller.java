@@ -17,7 +17,7 @@ public class Controller extends Application {
         myManBot.setGraphic(graphic);
 
 
-        System.out.println("Побед " + myManBot.getWin() + "\nПоражений " + myManBot.getLose());
+        System.out.println("Wins " + myManBot.getWin() + "\nLosses" + myManBot.getLose());
 
 
         //Ниже значение кнопок
@@ -37,14 +37,14 @@ public class Controller extends Application {
                     break;
 
                 case R:
-                    System.out.println("Перезагрузка уровня");
+                    System.out.println("Reload level");
                     logic.reload();
                     graphic.reload();
                     myManBot.reload();
                     break;
 
                 case T:
-                    System.out.println("Перезагрузка последнего уровня");
+                    System.out.println("Reload of last level");
                     logic.reloadLast();
                     graphic.reloadLast();
                     myManBot.reload();
@@ -67,13 +67,6 @@ public class Controller extends Application {
     }
 
 
-    static Logic getLogic() {
-        return logic;
-    }
-
-    static Graphic getGraphic() {
-        return graphic;
-    }
 
     static Bot getMyManBot(){
         return myManBot;

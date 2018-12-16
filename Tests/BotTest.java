@@ -22,9 +22,9 @@ public class BotTest {
                 i++;
             }
         }
-        assertEquals(true, bot.getWin() + bot.getLose() == numberOfGames);
-        assertEquals(true, (double) bot.getWin() / numberOfGames * 100 > 70);
-        System.out.println("Играя на простом = " + (double) bot.getWin() / numberOfGames * 100+"%");
+        assertEquals(bot.getWin() + bot.getLose(), numberOfGames);
+        assertTrue((double) bot.getWin() / numberOfGames * 100 > 70);
+        System.out.println("Easy mode = " + (double) bot.getWin() / numberOfGames * 100+"%");
 
 
     }
@@ -42,9 +42,9 @@ public class BotTest {
                 i++;
             }
         }
-        assertEquals(true, bot.getWin() + bot.getLose() == numberOfGames);
-        assertEquals(true, (double) bot.getWin() / numberOfGames * 100 > 45);
-        System.out.println("Играя на среднем = " + (double) bot.getWin() / numberOfGames * 100+"%");
+        assertEquals(bot.getWin() + bot.getLose(), numberOfGames);
+        assertTrue((double) bot.getWin() / numberOfGames * 100 > 45);
+        System.out.println("Middle mode = " + (double) bot.getWin() / numberOfGames * 100+"%");
 
 
 
@@ -63,9 +63,9 @@ public class BotTest {
                 i++;
             }
         }
-        assertEquals(true, bot.getWin() + bot.getLose() == numberOfGames);
-        assertEquals(true, (double) bot.getWin()*100 / numberOfGames > 2);
-        System.out.println("Играя на эксперте = " + (double) bot.getWin()*100 / numberOfGames+"%");
+        assertEquals(bot.getWin() + bot.getLose(), numberOfGames);
+        assertTrue((double) bot.getWin() * 100 / numberOfGames > 2);
+        System.out.println("Expert mode = " + (double) bot.getWin()*100 / numberOfGames+"%");
 
     }
 
@@ -88,7 +88,7 @@ public class BotTest {
         bot.helpMeBot();
         assertEquals(6, bot.getFindedMines());
         assertEquals(10, bot.getBotCells().size());
-        assertEquals(true, logic.isGameOver());
+        assertTrue(logic.isGameOver());
     }
 
     @Test
